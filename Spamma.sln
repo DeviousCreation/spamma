@@ -1,0 +1,60 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "shared", "shared", "{068EEF80-5F8B-44A1-9FE6-BC2B06400148}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Spamma.Shared", "shared\Spamma.Shared\Spamma.Shared.shproj", "{32A2AD16-4150-40BB-BD6F-58695BAC45E6}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "app", "app", "{6DB9E7C9-20E0-42BA-A023-9F77FE4342C6}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "source", "source", "{5878A847-8A18-4F6F-BB88-4B7215FFF366}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spamma.App", "app\source\Spamma.App\Spamma.App\Spamma.App.csproj", "{47ADB8D8-BAAA-4015-908B-E62AB5BD437F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spamma.App.Client", "app\source\Spamma.App\Spamma.App.Client\Spamma.App.Client.csproj", "{150E566E-C075-4FA9-8324-F93660F09187}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{E5CA6B3B-E80E-463E-9545-5178DFC968C7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spamma.App.Tests", "app\tests\Spamma.App.Tests\Spamma.App.Tests.csproj", "{8A7544F2-62C4-474E-89A3-8FEEEF976E51}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spamma.App.Client.Tests", "app\tests\Spamma.App.Client.Tests\Spamma.App.Client.Tests.csproj", "{5B1AB703-43FD-4A6E-A5AD-D2B9FE8A40D4}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_", "_", "{431F583D-FEE4-49AD-A287-DF2BEA5BC7B6}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+		LICENSE = LICENSE
+		README.md = README.md
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{32A2AD16-4150-40BB-BD6F-58695BAC45E6} = {068EEF80-5F8B-44A1-9FE6-BC2B06400148}
+		{5878A847-8A18-4F6F-BB88-4B7215FFF366} = {6DB9E7C9-20E0-42BA-A023-9F77FE4342C6}
+		{47ADB8D8-BAAA-4015-908B-E62AB5BD437F} = {5878A847-8A18-4F6F-BB88-4B7215FFF366}
+		{150E566E-C075-4FA9-8324-F93660F09187} = {5878A847-8A18-4F6F-BB88-4B7215FFF366}
+		{E5CA6B3B-E80E-463E-9545-5178DFC968C7} = {6DB9E7C9-20E0-42BA-A023-9F77FE4342C6}
+		{8A7544F2-62C4-474E-89A3-8FEEEF976E51} = {E5CA6B3B-E80E-463E-9545-5178DFC968C7}
+		{5B1AB703-43FD-4A6E-A5AD-D2B9FE8A40D4} = {E5CA6B3B-E80E-463E-9545-5178DFC968C7}
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{47ADB8D8-BAAA-4015-908B-E62AB5BD437F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{47ADB8D8-BAAA-4015-908B-E62AB5BD437F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{47ADB8D8-BAAA-4015-908B-E62AB5BD437F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{47ADB8D8-BAAA-4015-908B-E62AB5BD437F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{150E566E-C075-4FA9-8324-F93660F09187}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{150E566E-C075-4FA9-8324-F93660F09187}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{150E566E-C075-4FA9-8324-F93660F09187}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{150E566E-C075-4FA9-8324-F93660F09187}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8A7544F2-62C4-474E-89A3-8FEEEF976E51}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8A7544F2-62C4-474E-89A3-8FEEEF976E51}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8A7544F2-62C4-474E-89A3-8FEEEF976E51}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8A7544F2-62C4-474E-89A3-8FEEEF976E51}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5B1AB703-43FD-4A6E-A5AD-D2B9FE8A40D4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5B1AB703-43FD-4A6E-A5AD-D2B9FE8A40D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5B1AB703-43FD-4A6E-A5AD-D2B9FE8A40D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5B1AB703-43FD-4A6E-A5AD-D2B9FE8A40D4}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
