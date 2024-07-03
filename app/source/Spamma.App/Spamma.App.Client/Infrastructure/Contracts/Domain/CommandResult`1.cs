@@ -1,4 +1,5 @@
-﻿using Spamma.App.Client.Infrastructure.Constants;
+﻿using System.Text.Json.Serialization;
+using Spamma.App.Client.Infrastructure.Constants;
 
 namespace Spamma.App.Client.Infrastructure.Contracts.Domain;
 

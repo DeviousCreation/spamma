@@ -1,4 +1,6 @@
-﻿using MediatR;
+﻿using System.Net;
+using FluentValidation.Results;
+using MediatR;
 
 namespace Spamma.App.Client.Infrastructure.Contracts.Domain;
 

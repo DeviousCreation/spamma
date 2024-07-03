@@ -2,14 +2,14 @@
 
 namespace Spamma.App.Client.Infrastructure.Contracts.Domain;
 
-public sealed class ErrorData(ErrorCode code, string message)
+public sealed class ErrorData(ErrorCodes codes, string message)
 {
-    public ErrorData(ErrorCode code)
-        : this(code, code.ToString())
+    public ErrorData(ErrorCodes codes)
+        : this(codes, codes.ToString())
     {
     }
 
-    public ErrorCode Code { get; } = code;
+    public ErrorCodes Codes { get; } = codes;
 
     public string Message { get; } = message;
 }

@@ -1,0 +1,7 @@
+﻿{
+  domain: {
+    Name: spamma.dev,
+    Id: Guid_1
+  },
+  ListCheck: []
+}

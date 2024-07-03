@@ -1,0 +1,18 @@
+version: "3.9"
+name: spamma
+services:
+  postgres:
+    image: postgres:14-alpine
+    ports:
+      - 5432:5432
+    volumes:
+      - './.dockertemp/postgres:/var/lib/postgresql/data'
+    environment:
+      - POSTGRES_PASSWORD=spamma_password
+      - POSTGRES_USER=spamma_user
+      - POSTGRES_DB=spamma
+  mailhog:
+    image: mailhog/mailhog
+    ports:
+      - 1025:1025 # smtp server
+      - 8025:8025 # web ui

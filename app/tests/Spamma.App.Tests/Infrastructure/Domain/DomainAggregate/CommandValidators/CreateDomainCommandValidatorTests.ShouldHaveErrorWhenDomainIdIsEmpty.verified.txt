@@ -1,0 +1,19 @@
+﻿{
+  IsValid: false,
+  Errors: [
+    {
+      PropertyName: DomainId,
+      ErrorMessage: 'Domain Id' must not be empty.,
+      AttemptedValue: Guid_Empty,
+      ErrorCode: val-0001,
+      FormattedMessagePlaceholderValues: {
+        PropertyName: Domain Id,
+        PropertyPath: DomainId,
+        PropertyValue: Guid_Empty
+      }
+    }
+  ],
+  RuleSetsExecuted: [
+    default
+  ]
+}

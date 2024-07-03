@@ -1,4 +1,5 @@
-﻿using Spamma.App.Client.Infrastructure.Constants;
+﻿using System.Text.Json.Serialization;
+using Spamma.App.Client.Infrastructure.Constants;
 
 namespace Spamma.App.Client.Infrastructure.Contracts.Querying;
 
@@ -15,6 +16,13 @@ public class QueryResult<T>
     {
         this._data = data;
         this.Status = QueryResultStatus.Succeeded;
+    }
+
+    [JsonConstructor]
+    private QueryResult(T? data, QueryResultStatus status)
+    {
+        this._data = data;
+        this.Status = status;
     }
 
     public QueryResultStatus Status { get; }

@@ -38,6 +38,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\source\Spamma.App\Spamma.App\Spamma.App.csproj" />
+      <ProjectReference Include="..\Spamma.App.Tests.Common\Spamma.App.Tests.Common.csproj" />
     </ItemGroup>
 
     <Import Project="..\..\..\shared\Spamma.Shared\Spamma.Shared.projitems" Label="Shared" />

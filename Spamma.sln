@@ -1,5 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.10.35004.147
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "shared", "shared", "{068EEF80-5F8B-44A1-9FE6-BC2B06400148}"
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Spamma.Shared", "shared\Spamma.Shared\Spamma.Shared.shproj", "{32A2AD16-4150-40BB-BD6F-58695BAC45E6}"
@@ -8,36 +11,32 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "app", "app", "{6DB9E7C9-20E
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "source", "source", "{5878A847-8A18-4F6F-BB88-4B7215FFF366}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spamma.App", "app\source\Spamma.App\Spamma.App\Spamma.App.csproj", "{47ADB8D8-BAAA-4015-908B-E62AB5BD437F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Spamma.App", "app\source\Spamma.App\Spamma.App\Spamma.App.csproj", "{47ADB8D8-BAAA-4015-908B-E62AB5BD437F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spamma.App.Client", "app\source\Spamma.App\Spamma.App.Client\Spamma.App.Client.csproj", "{150E566E-C075-4FA9-8324-F93660F09187}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Spamma.App.Client", "app\source\Spamma.App\Spamma.App.Client\Spamma.App.Client.csproj", "{150E566E-C075-4FA9-8324-F93660F09187}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{E5CA6B3B-E80E-463E-9545-5178DFC968C7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spamma.App.Tests", "app\tests\Spamma.App.Tests\Spamma.App.Tests.csproj", "{8A7544F2-62C4-474E-89A3-8FEEEF976E51}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Spamma.App.Tests", "app\tests\Spamma.App.Tests\Spamma.App.Tests.csproj", "{8A7544F2-62C4-474E-89A3-8FEEEF976E51}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spamma.App.Client.Tests", "app\tests\Spamma.App.Client.Tests\Spamma.App.Client.Tests.csproj", "{5B1AB703-43FD-4A6E-A5AD-D2B9FE8A40D4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Spamma.App.Client.Tests", "app\tests\Spamma.App.Client.Tests\Spamma.App.Client.Tests.csproj", "{5B1AB703-43FD-4A6E-A5AD-D2B9FE8A40D4}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_", "_", "{431F583D-FEE4-49AD-A287-DF2BEA5BC7B6}"
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
+		docker-compose.yml = docker-compose.yml
 		LICENSE = LICENSE
 		README.md = README.md
 	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Spamma.App.Tests.Common", "app\tests\Spamma.App.Tests.Common\Spamma.App.Tests.Common.csproj", "{13B8A0FB-9B78-4382-8CA6-FC4CAFC9B929}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Spamma.CodeGeneration", "shared\Spamma.CodeGeneration\Spamma.CodeGeneration.csproj", "{6A26AA7D-8707-42AB-86F0-95E5A7946770}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{32A2AD16-4150-40BB-BD6F-58695BAC45E6} = {068EEF80-5F8B-44A1-9FE6-BC2B06400148}
-		{5878A847-8A18-4F6F-BB88-4B7215FFF366} = {6DB9E7C9-20E0-42BA-A023-9F77FE4342C6}
-		{47ADB8D8-BAAA-4015-908B-E62AB5BD437F} = {5878A847-8A18-4F6F-BB88-4B7215FFF366}
-		{150E566E-C075-4FA9-8324-F93660F09187} = {5878A847-8A18-4F6F-BB88-4B7215FFF366}
-		{E5CA6B3B-E80E-463E-9545-5178DFC968C7} = {6DB9E7C9-20E0-42BA-A023-9F77FE4342C6}
-		{8A7544F2-62C4-474E-89A3-8FEEEF976E51} = {E5CA6B3B-E80E-463E-9545-5178DFC968C7}
-		{5B1AB703-43FD-4A6E-A5AD-D2B9FE8A40D4} = {E5CA6B3B-E80E-463E-9545-5178DFC968C7}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{47ADB8D8-BAAA-4015-908B-E62AB5BD437F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -56,5 +55,35 @@ Global
 		{5B1AB703-43FD-4A6E-A5AD-D2B9FE8A40D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5B1AB703-43FD-4A6E-A5AD-D2B9FE8A40D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5B1AB703-43FD-4A6E-A5AD-D2B9FE8A40D4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{13B8A0FB-9B78-4382-8CA6-FC4CAFC9B929}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{13B8A0FB-9B78-4382-8CA6-FC4CAFC9B929}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{13B8A0FB-9B78-4382-8CA6-FC4CAFC9B929}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{13B8A0FB-9B78-4382-8CA6-FC4CAFC9B929}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6A26AA7D-8707-42AB-86F0-95E5A7946770}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6A26AA7D-8707-42AB-86F0-95E5A7946770}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6A26AA7D-8707-42AB-86F0-95E5A7946770}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6A26AA7D-8707-42AB-86F0-95E5A7946770}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{32A2AD16-4150-40BB-BD6F-58695BAC45E6} = {068EEF80-5F8B-44A1-9FE6-BC2B06400148}
+		{5878A847-8A18-4F6F-BB88-4B7215FFF366} = {6DB9E7C9-20E0-42BA-A023-9F77FE4342C6}
+		{47ADB8D8-BAAA-4015-908B-E62AB5BD437F} = {5878A847-8A18-4F6F-BB88-4B7215FFF366}
+		{150E566E-C075-4FA9-8324-F93660F09187} = {5878A847-8A18-4F6F-BB88-4B7215FFF366}
+		{E5CA6B3B-E80E-463E-9545-5178DFC968C7} = {6DB9E7C9-20E0-42BA-A023-9F77FE4342C6}
+		{8A7544F2-62C4-474E-89A3-8FEEEF976E51} = {E5CA6B3B-E80E-463E-9545-5178DFC968C7}
+		{5B1AB703-43FD-4A6E-A5AD-D2B9FE8A40D4} = {E5CA6B3B-E80E-463E-9545-5178DFC968C7}
+		{13B8A0FB-9B78-4382-8CA6-FC4CAFC9B929} = {E5CA6B3B-E80E-463E-9545-5178DFC968C7}
+		{6A26AA7D-8707-42AB-86F0-95E5A7946770} = {068EEF80-5F8B-44A1-9FE6-BC2B06400148}
+	EndGlobalSection
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		shared\Spamma.Shared\Spamma.Shared.projitems*{150e566e-c075-4fa9-8324-f93660f09187}*SharedItemsImports = 5
+		shared\Spamma.Shared\Spamma.Shared.projitems*{32a2ad16-4150-40bb-bd6f-58695bac45e6}*SharedItemsImports = 13
+		shared\Spamma.Shared\Spamma.Shared.projitems*{47adb8d8-baaa-4015-908b-e62ab5bd437f}*SharedItemsImports = 5
+		shared\Spamma.Shared\Spamma.Shared.projitems*{5b1ab703-43fd-4a6e-a5ad-d2b9fe8a40d4}*SharedItemsImports = 5
+		shared\Spamma.Shared\Spamma.Shared.projitems*{6a26aa7d-8707-42ab-86f0-95e5a7946770}*SharedItemsImports = 5
+		shared\Spamma.Shared\Spamma.Shared.projitems*{8a7544f2-62c4-474e-89a3-8feeef976e51}*SharedItemsImports = 5
 	EndGlobalSection
 EndGlobal

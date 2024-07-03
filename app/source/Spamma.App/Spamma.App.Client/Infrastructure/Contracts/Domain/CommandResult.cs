@@ -1,7 +1,9 @@
-﻿using Spamma.App.Client.Infrastructure.Constants;
+﻿using System.Text.Json.Serialization;
+using Spamma.App.Client.Infrastructure.Constants;
 
 namespace Spamma.App.Client.Infrastructure.Contracts.Domain;
 
+[JsonConverter(typeof(CommandResultConverter))]
 public class CommandResult
 {
     private readonly ErrorData? _errorData;
@@ -21,6 +23,13 @@ public class CommandResult
     protected CommandResult(CommandValidationResult commandValidationResult)
     {
         this.Status = CommandResultStatus.Invalid;
+        this._commandValidationResult = commandValidationResult;
+    }
+
+    [JsonConstructor]
+    private CommandResult(ErrorData? errorData, CommandValidationResult? commandValidationResult)
+    {
+        this._errorData = errorData;
         this._commandValidationResult = commandValidationResult;
     }
 

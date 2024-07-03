@@ -1,0 +1,7 @@
+﻿{
+  Status: Succeeded,
+  entity: {
+    Name: spamma.dev,
+    Id: Guid_1
+  }
+}
