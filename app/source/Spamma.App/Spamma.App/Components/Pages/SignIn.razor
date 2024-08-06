@@ -1,0 +1,8 @@
+﻿@page "/sign-in"
+<h3>SignIn</h3>
+<EditForm Model="Model" method="post" OnSubmit="Login" FormName="signin">
+    <label>Email Address</label>
+    <InputText @bind-Value="Model.EmailAddress"></InputText>
+    
+    <button type="submit">Login</button>
+</EditForm>

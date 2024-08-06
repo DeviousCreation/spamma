@@ -32,7 +32,8 @@ namespace Spamma.CodeGeneration.DefinitionProcessors.InputDefinitionProcessors
                 }
 
                 definitions.Add(new InputDefinition(
-                    genericNameSyntax.TypeArgumentList.Arguments[0]));
+                    genericNameSyntax.TypeArgumentList.Arguments[0],
+                    genericNameSyntax.TypeArgumentList.Arguments[1]));
                 break;
             }
 
@@ -41,12 +42,15 @@ namespace Spamma.CodeGeneration.DefinitionProcessors.InputDefinitionProcessors
 
         internal class InputDefinition : IInputDefinition
         {
-            public InputDefinition(TypeSyntax commandDeclaration)
+            public InputDefinition(TypeSyntax commandDeclaration, TypeSyntax commandResultDeclaration)
             {
                 this.CommandDeclaration = commandDeclaration;
+                this.CommandResultDeclaration = commandResultDeclaration;
             }
 
             public TypeSyntax CommandDeclaration { get; }
+
+            public TypeSyntax CommandResultDeclaration { get; }
         }
     }
 }

@@ -7,17 +7,25 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Blazor.Bootstrap" Version="3.0.0-preview.1" />
-        <PackageReference Include="EntityFrameworkCore.Exceptions.PostgreSQL" Version="8.1.2" />
+        <PackageReference Include="Blazor.Bootstrap" Version="3.0.0-preview.3" />
+        <PackageReference Include="DotNetCore.CAP" Version="8.2.0" />
+        <PackageReference Include="DotNetCore.CAP.InMemoryStorage" Version="8.2.0" />
+        <PackageReference Include="EFCore.NamingConventions" Version="8.0.3" />
+        <PackageReference Include="EntityFrameworkCore.Exceptions.PostgreSQL" Version="8.1.3" />
+        <PackageReference Include="FluentEmail.Core" Version="3.0.2" />
+        <PackageReference Include="FluentEmail.Razor" Version="3.0.2" />
+        <PackageReference Include="FluentEmail.Smtp" Version="3.0.2" />
         <PackageReference Include="MaybeMonad" Version="1.0.1.1" />
-        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.6" />
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.6">
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.7" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.7">
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
+        <PackageReference Include="NodaTime" Version="3.1.11" />
         <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.4" />
         <PackageReference Include="ResultMonad" Version="1.0.1" />
-        <PackageReference Include="SonarAnalyzer.CSharp" Version="9.27.0.93347">
+        <PackageReference Include="Savorboard.CAP.InMemoryMessageQueue" Version="8.2.1" />
+        <PackageReference Include="SonarAnalyzer.CSharp" Version="9.30.0.95878">
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
@@ -25,9 +33,10 @@
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Z.EntityFramework.Plus.EFCore" Version="8.103.0" />
+        <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.0.1" />
+        <PackageReference Include="Z.EntityFramework.Plus.EFCore" Version="8.103.1" />
         <ProjectReference Include="..\Spamma.App.Client\Spamma.App.Client.csproj"/>
-        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.6" />
+        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.7" />
     </ItemGroup>
 
     <ItemGroup>
@@ -37,6 +46,10 @@
 
     <ItemGroup>
         <ProjectReference Include="..\..\..\..\shared\Spamma.CodeGeneration\Spamma.CodeGeneration.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <InternalsVisibleTo Include="Spamma.App.Tests" />
     </ItemGroup>
 
     <Import Project="..\..\..\..\shared\Spamma.Shared\Spamma.Shared.projitems" Label="Shared" />

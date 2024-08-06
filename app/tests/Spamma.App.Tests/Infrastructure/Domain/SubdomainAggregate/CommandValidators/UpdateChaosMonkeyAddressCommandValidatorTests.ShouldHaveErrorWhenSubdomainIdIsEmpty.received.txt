@@ -1,0 +1,30 @@
+﻿{
+  IsValid: false,
+  Errors: [
+    {
+      PropertyName: SubdomainId,
+      ErrorMessage: 'Subdomain Id' must not be empty.,
+      AttemptedValue: Guid_Empty,
+      ErrorCode: val-0001,
+      FormattedMessagePlaceholderValues: {
+        PropertyName: Subdomain Id,
+        PropertyPath: SubdomainId,
+        PropertyValue: Guid_Empty
+      }
+    },
+    {
+      PropertyName: Type,
+      ErrorMessage: 'Type' must not be empty.,
+      AttemptedValue: None,
+      ErrorCode: val-0001,
+      FormattedMessagePlaceholderValues: {
+        PropertyName: Type,
+        PropertyPath: Type,
+        PropertyValue: None
+      }
+    }
+  ],
+  RuleSetsExecuted: [
+    default
+  ]
+}

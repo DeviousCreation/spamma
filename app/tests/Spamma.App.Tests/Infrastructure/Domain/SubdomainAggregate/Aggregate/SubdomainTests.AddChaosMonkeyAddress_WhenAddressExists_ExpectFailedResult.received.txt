@@ -1,0 +1,8 @@
+﻿{
+  entity: {},
+  IsFailure: true,
+  Error: {
+    Codes: ChaosMonkeyAddressAlreadyExists,
+    Message: Chaos monkey address already exists.
+  }
+}

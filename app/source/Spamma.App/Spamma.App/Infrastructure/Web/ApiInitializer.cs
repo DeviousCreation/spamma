@@ -1,4 +1,6 @@
-﻿namespace Spamma.App.Infrastructure.Web;
+﻿using System.Runtime.CompilerServices;
+
+namespace Spamma.App.Infrastructure.Web;
 
 public static partial class ApiInitializer
 {

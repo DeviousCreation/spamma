@@ -4,7 +4,7 @@ using Spamma.App.Infrastructure.Database;
 
 namespace Spamma.App.Infrastructure.Contracts.Domain
 {
-    public abstract class Repository<TAggregateRoot>(SpammaDataContext dbContext) : IRepository<TAggregateRoot>
+    internal abstract class Repository<TAggregateRoot>(SpammaDataContext dbContext) : IRepository<TAggregateRoot>
         where TAggregateRoot : class, IAggregateRoot
     {
         public IUnitOfWork UnitOfWork => dbContext;
@@ -19,7 +19,7 @@ namespace Spamma.App.Infrastructure.Contracts.Domain
             dbContext.Set<TAggregateRoot>().Add(entity);
         }
 
-        public void Update(TAggregateRoot aggregate)
+        public void ForceUpdate(TAggregateRoot aggregate)
         {
             if (aggregate is not TAggregateRoot entity)
             {

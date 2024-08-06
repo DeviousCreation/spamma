@@ -16,7 +16,7 @@
         </PackageReference>
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.10.0" />
         <PackageReference Include="Moq" Version="4.20.70" />
-        <PackageReference Include="SonarAnalyzer.CSharp" Version="9.27.0.93347">
+        <PackageReference Include="SonarAnalyzer.CSharp" Version="9.29.0.95321">
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
@@ -24,9 +24,9 @@
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Verify.Xunit" Version="25.0.2" />
-        <PackageReference Include="xunit" Version="2.8.1" />
-        <PackageReference Include="xunit.runner.visualstudio" Version="2.8.1">
+        <PackageReference Include="Verify.Xunit" Version="25.3.2" />
+        <PackageReference Include="xunit" Version="2.9.0" />
+        <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2">
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
@@ -39,6 +39,10 @@
     <ItemGroup>
       <ProjectReference Include="..\..\source\Spamma.App\Spamma.App\Spamma.App.csproj" />
       <ProjectReference Include="..\Spamma.App.Tests.Common\Spamma.App.Tests.Common.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Infrastructure\Domain\SubdomainAggregate\CommandHandlers\" />
     </ItemGroup>
 
     <Import Project="..\..\..\shared\Spamma.Shared\Spamma.Shared.projitems" Label="Shared" />

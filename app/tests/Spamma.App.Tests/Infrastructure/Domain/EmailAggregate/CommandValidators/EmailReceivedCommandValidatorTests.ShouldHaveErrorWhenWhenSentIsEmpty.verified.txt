@@ -1,0 +1,19 @@
+﻿{
+  IsValid: false,
+  Errors: [
+    {
+      PropertyName: WhenSent,
+      ErrorMessage: 'When Sent' must not be empty.,
+      AttemptedValue: Date_MinValue,
+      ErrorCode: val-0001,
+      FormattedMessagePlaceholderValues: {
+        PropertyName: When Sent,
+        PropertyPath: WhenSent,
+        PropertyValue: Date_MinValue
+      }
+    }
+  ],
+  RuleSetsExecuted: [
+    default
+  ]
+}

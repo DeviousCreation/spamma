@@ -1,0 +1,16 @@
+﻿{
+  domain: {
+    Id: Guid_Empty,
+    WhenCreated: Date_MinValue,
+    Name: spamma.dev,
+    CreatedUserId: Guid_1
+  },
+  ListCheck: [
+    {
+      DomainAccessPolicies: true
+    },
+    {
+      DomainEvents: true
+    }
+  ]
+}

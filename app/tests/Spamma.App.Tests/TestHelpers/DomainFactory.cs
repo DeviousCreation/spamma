@@ -4,11 +4,11 @@ using ResultMonad;
 using Spamma.App.Infrastructure.Contracts.Database;
 using Spamma.App.Infrastructure.Contracts.Domain;
 
-namespace Spamma.App.Tests.Common;
+namespace Spamma.App.Tests.TestHelpers;
 
 public static class DomainFactory
     {
-        public static Mock<IUnitOfWork> CreateSuccessfulUnitOfWork()
+        internal static Mock<IUnitOfWork> CreateSuccessfulUnitOfWork()
         {
             var unitOfWork = new Mock<IUnitOfWork>();
             unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>()))
@@ -17,7 +17,7 @@ public static class DomainFactory
             return unitOfWork;
         }
 
-        public static Mock<IUnitOfWork> CreateFailedUnitOfWork()
+        internal static Mock<IUnitOfWork> CreateFailedUnitOfWork()
         {
             var unitOfWork = new Mock<IUnitOfWork>();
             unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>()))
@@ -26,7 +26,7 @@ public static class DomainFactory
             return unitOfWork;
         }
 
-        public static Mock<IRepository<TEntity>> NoData<TEntity>()
+        internal static Mock<IRepository<TEntity>> NoData<TEntity>()
             where TEntity : class, IAggregateRoot
         {
             var repository = new Mock<IRepository<TEntity>>();
@@ -39,7 +39,7 @@ public static class DomainFactory
             return repository;
         }
 
-        public static Mock<IRepository<TEntity>> Empty<TEntity>(
+        internal static Mock<IRepository<TEntity>> Empty<TEntity>(
             Mock<IUnitOfWork> unitOfWork,
             Action<TEntity>? addCallback = null)
             where TEntity : class, IAggregateRoot
@@ -56,7 +56,7 @@ public static class DomainFactory
             return repository;
         }
 
-        public static Mock<IRepository<TEntity>> FindOne<TEntity>(Mock<TEntity> entity)
+        internal static Mock<IRepository<TEntity>> FindOne<TEntity>(Mock<TEntity> entity)
             where TEntity : class, IAggregateRoot
         {
             var repository = new Mock<IRepository<TEntity>>();
@@ -69,7 +69,7 @@ public static class DomainFactory
             return repository;
         }
 
-        public static Mock<IRepository<TEntity>> FindOne<TEntity>(
+        internal static Mock<IRepository<TEntity>> FindOne<TEntity>(
             Mock<TEntity> entity,
             Mock<IUnitOfWork> unitOfWork)
             where TEntity : class, IAggregateRoot

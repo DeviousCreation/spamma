@@ -2,14 +2,14 @@
 
 namespace Spamma.App.Infrastructure.Contracts.Domain
 {
-    public interface IRepository<TAggregateRoot> : IDisposable
+    internal interface IRepository<TAggregateRoot> : IDisposable
         where TAggregateRoot : class, IAggregateRoot
     {
         IUnitOfWork UnitOfWork { get; }
 
         void Add(TAggregateRoot aggregate);
 
-        void Update(TAggregateRoot aggregate);
+        void ForceUpdate(TAggregateRoot aggregate);
 
         void Delete(IAggregateRoot aggregate);
 

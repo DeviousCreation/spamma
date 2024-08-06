@@ -49,7 +49,15 @@ public static class EntityHelpers
     public static IEnumerable<KeyValuePair<string, bool>> CheckLists<TEntity>(TEntity entity)
         where TEntity : Entity
     {
-        foreach (var prop in entity.GetType().GetProperties().Where(x => x.PropertyType.Name == "IReadOnlyList`1"))
+        var listTypes = new List<string>
+        {
+            "IReadOnlyList`1",
+            "IReadOnlyCollection`1",
+        };
+        
+        foreach (var prop in entity.GetType().GetProperties(
+                     BindingFlags.NonPublic |
+                     BindingFlags.Instance).Where(x => listTypes.Contains(x.PropertyType.Name)))
         {
             var val = prop.GetValue(entity, null);
             yield return new KeyValuePair<string, bool>(prop.Name, val != null);

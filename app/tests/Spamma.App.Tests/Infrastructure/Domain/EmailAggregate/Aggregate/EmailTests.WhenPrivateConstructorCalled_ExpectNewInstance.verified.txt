@@ -1,0 +1,10 @@
+﻿{
+  domain: {
+    SubdomainId: Guid_1,
+    EmailAddress: email@spamma.dev,
+    Subject: subject,
+    WhenSent: DateTime_1,
+    Id: Guid_2
+  },
+  ListCheck: []
+}

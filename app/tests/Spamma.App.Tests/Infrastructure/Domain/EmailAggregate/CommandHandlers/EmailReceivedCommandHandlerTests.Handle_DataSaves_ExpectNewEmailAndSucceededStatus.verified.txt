@@ -1,0 +1,10 @@
+﻿{
+  Status: Succeeded,
+  entity: {
+    SubdomainId: Guid_1,
+    EmailAddress: email-address,
+    Subject: subject,
+    WhenSent: DateTime_1,
+    Id: Guid_2
+  }
+}

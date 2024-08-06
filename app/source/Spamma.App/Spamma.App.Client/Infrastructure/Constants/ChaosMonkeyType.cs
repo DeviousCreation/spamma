@@ -2,5 +2,7 @@
 
 public enum ChaosMonkeyType
 {
-    
+    None,
+    NotFound,
+    InboxFull,
 }

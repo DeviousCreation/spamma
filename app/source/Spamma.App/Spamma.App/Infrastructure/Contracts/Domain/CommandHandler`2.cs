@@ -3,7 +3,7 @@ using Spamma.App.Client.Infrastructure.Contracts.Domain;
 
 namespace Spamma.App.Infrastructure.Contracts.Domain;
 
-public abstract class CommandHandler<TCommand, TResult>(IEnumerable<IValidator<TCommand>> validators, ILogger logger) : ICommandHandler<TCommand, TResult>
+internal abstract class CommandHandler<TCommand, TResult>(IEnumerable<IValidator<TCommand>> validators, ILogger logger) : ICommandHandler<TCommand, TResult>
     where TCommand : ICommand<TResult>
 {
     public async Task<CommandResult<TResult>> Handle(TCommand request, CancellationToken cancellationToken)

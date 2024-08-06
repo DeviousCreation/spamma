@@ -1,0 +1,11 @@
+﻿{
+  entity: {
+    EmailAddress: chaos@spamma.dev,
+    Type: NotFound
+  },
+  ListCheck: [
+    {
+      DomainEvents: true
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+﻿{
+  domain: {},
+  ListCheck: [
+    {
+      DomainEvents: true
+    }
+  ]
+}

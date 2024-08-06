@@ -17,7 +17,7 @@ namespace Spamma.App.Infrastructure.Database.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.6")
+                .HasAnnotation("ProductVersion", "8.0.7")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -25,31 +25,505 @@ namespace Spamma.App.Infrastructure.Database.Migrations
             modelBuilder.Entity("Spamma.App.Infrastructure.Domain.DomainAggregate.Aggregate.Domain", b =>
                 {
                     b.Property<Guid>("Id")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<Guid>("CreatedUserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("created_user_id");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("name");
 
-                    b.HasKey("Id");
+                    b.Property<DateTime>("WhenCreated")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("when_created");
 
-                    b.ToTable("Domain", (string)null);
+                    b.HasKey("Id")
+                        .HasName("pk_domain");
+
+                    b.HasIndex("Name")
+                        .IsUnique()
+                        .HasDatabaseName("ix_domain_name");
+
+                    b.ToTable("domain", (string)null);
+                });
+
+            modelBuilder.Entity("Spamma.App.Infrastructure.Domain.EmailAggregate.Aggregate.Email", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("EmailAddress")
+                        .IsRequired()
+                        .HasMaxLength(320)
+                        .HasColumnType("character varying(320)")
+                        .HasColumnName("email_address");
+
+                    b.Property<Guid>("SubdomainId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("subdomain_id");
+
+                    b.Property<string>("Subject")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("subject");
+
+                    b.Property<DateTime>("WhenSent")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("when_sent");
+
+                    b.HasKey("Id")
+                        .HasName("pk_email");
+
+                    b.ToTable("email", (string)null);
+                });
+
+            modelBuilder.Entity("Spamma.App.Infrastructure.Domain.SubdomainAggregate.Aggregate.Subdomain", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<Guid>("DomainId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("domain_id");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("name");
+
+                    b.HasKey("Id")
+                        .HasName("pk_subdomain");
+
+                    b.HasIndex("Name")
+                        .IsUnique()
+                        .HasDatabaseName("ix_subdomain_name");
+
+                    b.ToTable("subdomain", (string)null);
+                });
+
+            modelBuilder.Entity("Spamma.App.Infrastructure.Domain.UserAggregate.Aggregate.User", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("EmailAddress")
+                        .IsRequired()
+                        .HasMaxLength(320)
+                        .HasColumnType("character varying(320)")
+                        .HasColumnName("email_address");
+
+                    b.Property<Guid>("SecurityStamp")
+                        .HasColumnType("uuid")
+                        .HasColumnName("security_stamp");
+
+                    b.Property<DateTime>("WhenCreated")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("when_created");
+
+                    b.HasKey("Id")
+                        .HasName("pk_user");
+
+                    b.ToTable("user", (string)null);
+                });
+
+            modelBuilder.Entity("Spamma.App.Infrastructure.Querying.Entities.ChaosMonkeyAddressQueryEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<Guid>("SubdomainId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("subdomain_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_chaos_monkey_address_query_entity");
+
+                    b.HasIndex("SubdomainId");
+
+                    b.ToTable((string)null);
+
+                    b.ToView("vw_chaos_monkey_address", (string)null);
+                });
+
+            modelBuilder.Entity("Spamma.App.Infrastructure.Querying.Entities.DomainAccessPolicyQueryEntity", b =>
+                {
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
+
+                    b.Property<Guid>("DomainId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("domain_id");
+
+                    b.HasKey("UserId", "DomainId")
+                        .HasName("pk_domain_access_policy_query_entity");
+
+                    b.HasIndex("DomainId");
+
+                    b.ToTable((string)null);
+
+                    b.ToView("vw_domain_access_policy", (string)null);
                 });
 
             modelBuilder.Entity("Spamma.App.Infrastructure.Querying.Entities.DomainQueryEntity", b =>
                 {
                     b.Property<Guid>("Id")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("name");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("pk_domain_query_entity");
 
                     b.ToTable((string)null);
 
-                    b.ToView("vw_Domain", (string)null);
+                    b.ToView("vw_domain", (string)null);
+                });
+
+            modelBuilder.Entity("Spamma.App.Infrastructure.Querying.Entities.EmailQueryEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<Guid>("SubdomainId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("subdomain_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_email_query_entity");
+
+                    b.HasIndex("SubdomainId");
+
+                    b.ToTable((string)null);
+
+                    b.ToView("vw_email", (string)null);
+                });
+
+            modelBuilder.Entity("Spamma.App.Infrastructure.Querying.Entities.RecordedUserEventQueryEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_recorded_user_event_query_entity");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable((string)null);
+
+                    b.ToView("vw_recorded_user_event", (string)null);
+                });
+
+            modelBuilder.Entity("Spamma.App.Infrastructure.Querying.Entities.SubdomainAccessPolicyQueryEntity", b =>
+                {
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
+
+                    b.Property<Guid>("SubdomainId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("subdomain_id");
+
+                    b.HasKey("UserId", "SubdomainId")
+                        .HasName("pk_subdomain_access_policy_query_entity");
+
+                    b.HasIndex("SubdomainId");
+
+                    b.ToTable((string)null);
+
+                    b.ToView("vw_subdomain_access_policy", (string)null);
+                });
+
+            modelBuilder.Entity("Spamma.App.Infrastructure.Querying.Entities.SubdomainQueryEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<Guid>("DomainId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("domain_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_subdomain_query_entity");
+
+                    b.HasIndex("DomainId")
+                        .HasDatabaseName("ix_subdomain_query_entity_domain_id");
+
+                    b.ToTable((string)null);
+
+                    b.ToView("vw_subdomain", (string)null);
+                });
+
+            modelBuilder.Entity("Spamma.App.Infrastructure.Querying.Entities.UserQueryEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_user_query_entity");
+
+                    b.ToTable((string)null);
+
+                    b.ToView("vw_user", (string)null);
+                });
+
+            modelBuilder.Entity("Spamma.App.Infrastructure.Domain.DomainAggregate.Aggregate.Domain", b =>
+                {
+                    b.OwnsMany("Spamma.App.Infrastructure.Domain.DomainAggregate.Aggregate.DomainAccessPolicy", "DomainAccessPolicies", b1 =>
+                        {
+                            b1.Property<Guid>("DomainId")
+                                .HasColumnType("uuid")
+                                .HasColumnName("domain_id");
+
+                            b1.Property<Guid>("Id")
+                                .HasColumnType("uuid")
+                                .HasColumnName("user_id");
+
+                            b1.Property<int>("PolicyType")
+                                .HasColumnType("integer")
+                                .HasColumnName("policy_type");
+
+                            b1.Property<DateTime>("WhenAssigned")
+                                .HasColumnType("timestamp with time zone")
+                                .HasColumnName("when_assigned");
+
+                            b1.Property<DateTime?>("_whenRevoked")
+                                .HasColumnType("timestamp with time zone")
+                                .HasColumnName("when_revoked");
+
+                            b1.HasKey("DomainId", "Id")
+                                .HasName("pk_domain_access_policy");
+
+                            b1.ToTable("domain_access_policy", (string)null);
+
+                            b1.WithOwner()
+                                .HasForeignKey("DomainId")
+                                .HasConstraintName("fk_domain_access_policy_domain_domain_id");
+                        });
+
+                    b.Navigation("DomainAccessPolicies");
+                });
+
+            modelBuilder.Entity("Spamma.App.Infrastructure.Domain.SubdomainAggregate.Aggregate.Subdomain", b =>
+                {
+                    b.OwnsMany("Spamma.App.Infrastructure.Domain.SubdomainAggregate.Aggregate.ChaosMonkeyAddress", "ChaosMonkeyAddresses", b1 =>
+                        {
+                            b1.Property<Guid>("Id")
+                                .HasColumnType("uuid")
+                                .HasColumnName("id");
+
+                            b1.Property<string>("EmailAddress")
+                                .IsRequired()
+                                .HasMaxLength(320)
+                                .HasColumnType("character varying(320)")
+                                .HasColumnName("email_address");
+
+                            b1.Property<Guid>("SubdomainId")
+                                .HasColumnType("uuid")
+                                .HasColumnName("subdomain_id");
+
+                            b1.Property<int>("Type")
+                                .HasColumnType("integer")
+                                .HasColumnName("type");
+
+                            b1.HasKey("Id")
+                                .HasName("pk_chaos_monkey_address");
+
+                            b1.HasIndex("EmailAddress")
+                                .IsUnique()
+                                .HasDatabaseName("ix_chaos_monkey_address_email_address");
+
+                            b1.HasIndex("SubdomainId")
+                                .HasDatabaseName("ix_chaos_monkey_address_subdomain_id");
+
+                            b1.ToTable("chaos_monkey_address", (string)null);
+
+                            b1.WithOwner()
+                                .HasForeignKey("SubdomainId")
+                                .HasConstraintName("fk_chaos_monkey_address_subdomain_subdomain_id");
+                        });
+
+                    b.OwnsMany("Spamma.App.Infrastructure.Domain.SubdomainAggregate.Aggregate.SubdomainAccessPolicy", "SubdomainAccessPolicies", b1 =>
+                        {
+                            b1.Property<Guid>("SubdomainId")
+                                .HasColumnType("uuid")
+                                .HasColumnName("subdomain_id");
+
+                            b1.Property<Guid>("Id")
+                                .HasColumnType("uuid")
+                                .HasColumnName("user_id");
+
+                            b1.Property<int>("PolicyType")
+                                .HasColumnType("integer")
+                                .HasColumnName("policy_type");
+
+                            b1.Property<DateTime>("WhenAssigned")
+                                .HasColumnType("timestamp with time zone")
+                                .HasColumnName("when_assigned");
+
+                            b1.Property<DateTime?>("_whenRevoked")
+                                .HasColumnType("timestamp with time zone")
+                                .HasColumnName("when_revoked");
+
+                            b1.HasKey("SubdomainId", "Id")
+                                .HasName("pk_subdomain_access_policy");
+
+                            b1.ToTable("subdomain_access_policy", (string)null);
+
+                            b1.WithOwner()
+                                .HasForeignKey("SubdomainId")
+                                .HasConstraintName("fk_subdomain_access_policy_subdomain_subdomain_id");
+                        });
+
+                    b.Navigation("ChaosMonkeyAddresses");
+
+                    b.Navigation("SubdomainAccessPolicies");
+                });
+
+            modelBuilder.Entity("Spamma.App.Infrastructure.Domain.UserAggregate.Aggregate.User", b =>
+                {
+                    b.OwnsMany("Spamma.App.Infrastructure.Domain.UserAggregate.Aggregate.RecordedUserEvent", "RecordedUserEvents", b1 =>
+                        {
+                            b1.Property<Guid>("Id")
+                                .HasColumnType("uuid")
+                                .HasColumnName("id");
+
+                            b1.Property<int>("ActionType")
+                                .HasColumnType("integer")
+                                .HasColumnName("action_type");
+
+                            b1.Property<Guid>("UserId")
+                                .HasColumnType("uuid")
+                                .HasColumnName("user_id");
+
+                            b1.Property<DateTime>("WhenHappened")
+                                .HasColumnType("timestamp with time zone")
+                                .HasColumnName("when_happened");
+
+                            b1.HasKey("Id")
+                                .HasName("pk_recorded_user_event");
+
+                            b1.HasIndex("UserId")
+                                .HasDatabaseName("ix_recorded_user_event_user_id");
+
+                            b1.ToTable("recorded_user_event", (string)null);
+
+                            b1.WithOwner()
+                                .HasForeignKey("UserId")
+                                .HasConstraintName("fk_recorded_user_event_user_user_id");
+                        });
+
+                    b.Navigation("RecordedUserEvents");
+                });
+
+            modelBuilder.Entity("Spamma.App.Infrastructure.Querying.Entities.ChaosMonkeyAddressQueryEntity", b =>
+                {
+                    b.HasOne("Spamma.App.Infrastructure.Querying.Entities.SubdomainQueryEntity", "Subdomain")
+                        .WithMany("ChaosMonkeyAddresses")
+                        .HasForeignKey("SubdomainId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Subdomain");
+                });
+
+            modelBuilder.Entity("Spamma.App.Infrastructure.Querying.Entities.DomainAccessPolicyQueryEntity", b =>
+                {
+                    b.HasOne("Spamma.App.Infrastructure.Querying.Entities.DomainQueryEntity", "Domain")
+                        .WithMany("DomainAccessPolicies")
+                        .HasForeignKey("DomainId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Domain");
+                });
+
+            modelBuilder.Entity("Spamma.App.Infrastructure.Querying.Entities.EmailQueryEntity", b =>
+                {
+                    b.HasOne("Spamma.App.Infrastructure.Querying.Entities.SubdomainQueryEntity", "Subdomain")
+                        .WithMany("Emails")
+                        .HasForeignKey("SubdomainId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Subdomain");
+                });
+
+            modelBuilder.Entity("Spamma.App.Infrastructure.Querying.Entities.RecordedUserEventQueryEntity", b =>
+                {
+                    b.HasOne("Spamma.App.Infrastructure.Querying.Entities.UserQueryEntity", "User")
+                        .WithMany("RecordedUserEventQueryEntities")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Spamma.App.Infrastructure.Querying.Entities.SubdomainAccessPolicyQueryEntity", b =>
+                {
+                    b.HasOne("Spamma.App.Infrastructure.Querying.Entities.SubdomainQueryEntity", "Subdomain")
+                        .WithMany("SubdomainAccessPolicies")
+                        .HasForeignKey("SubdomainId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Subdomain");
+                });
+
+            modelBuilder.Entity("Spamma.App.Infrastructure.Querying.Entities.SubdomainQueryEntity", b =>
+                {
+                    b.HasOne("Spamma.App.Infrastructure.Querying.Entities.DomainQueryEntity", "Domain")
+                        .WithMany("Subdomains")
+                        .HasForeignKey("DomainId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Domain");
+                });
+
+            modelBuilder.Entity("Spamma.App.Infrastructure.Querying.Entities.DomainQueryEntity", b =>
+                {
+                    b.Navigation("DomainAccessPolicies");
+
+                    b.Navigation("Subdomains");
+                });
+
+            modelBuilder.Entity("Spamma.App.Infrastructure.Querying.Entities.SubdomainQueryEntity", b =>
+                {
+                    b.Navigation("ChaosMonkeyAddresses");
+
+                    b.Navigation("Emails");
+
+                    b.Navigation("SubdomainAccessPolicies");
+                });
+
+            modelBuilder.Entity("Spamma.App.Infrastructure.Querying.Entities.UserQueryEntity", b =>
+                {
+                    b.Navigation("RecordedUserEventQueryEntities");
                 });
 #pragma warning restore 612, 618
         }

@@ -1,0 +1,8 @@
+﻿{
+  domain: {},
+  IsFailure: true,
+  Error: {
+    Codes: DomainAccessPolicyAlreadyExists,
+    Message: Domain access policy already exists.
+  }
+}

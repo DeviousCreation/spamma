@@ -5,5 +5,12 @@ public enum ErrorCodes
     CommunicationError,
     SavingChanges,
     ChaosMonkeyAddressAlreadyExists,
-    ChaosMonkeyAddressNotFound
+    ChaosMonkeyAddressNotFound,
+    NotFound,
+    DomainAccessPolicyAlreadyRevoked,
+    DomainAccessPolicyAlreadyExists,
+    DomainAccessPolicyNotFound,
+    SubdomainAccessPolicyNotFound,
+    SubdomainAccessPolicyAlreadyExists,
+    TokenNotValid
 }

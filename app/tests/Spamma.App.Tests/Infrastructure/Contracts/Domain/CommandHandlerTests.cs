@@ -35,7 +35,7 @@ public class CommandHandlerTests
         });
     }
 
-    public class StubCommandHandler(IEnumerable<IValidator<StubCommand>> validators, ILogger logger) : CommandHandler<StubCommand>(validators, logger)
+    internal class StubCommandHandler(IEnumerable<IValidator<StubCommand>> validators, ILogger<StubCommandHandler> logger) : CommandHandler<StubCommand>(validators, logger)
     {
         protected override Task<CommandResult> HandleInternal(StubCommand request, CancellationToken cancellationToken)
         {
@@ -43,5 +43,5 @@ public class CommandHandlerTests
         }
     }
 
-    public class StubCommand : ICommand;
+    internal class StubCommand : ICommand;
 }

@@ -1,0 +1,14 @@
+﻿{
+  entity: {},
+  ListCheck: [
+    {
+      ChaosMonkeyAddresses: true
+    },
+    {
+      SubdomainAccessPolicies: true
+    },
+    {
+      DomainEvents: true
+    }
+  ]
+}

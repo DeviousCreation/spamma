@@ -1,0 +1,12 @@
+﻿{
+  Status: Succeeded,
+  entity: {
+    Id: Guid_1,
+    WhenCreated: DateTime_1,
+    Name: spamma.dev,
+    CreatedUserId: Guid_2,
+    DomainAccessPolicies: [
+      {}
+    ]
+  }
+}

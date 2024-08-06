@@ -1,0 +1,6 @@
+﻿{
+  entity: {
+    Id: Guid_1
+  },
+  ListCheck: []
+}

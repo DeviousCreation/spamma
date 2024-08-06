@@ -1,0 +1,19 @@
+﻿{
+  IsValid: false,
+  Errors: [
+    {
+      PropertyName: AddressId,
+      ErrorMessage: 'Address Id' must not be empty.,
+      AttemptedValue: Guid_Empty,
+      ErrorCode: val-0001,
+      FormattedMessagePlaceholderValues: {
+        PropertyName: Address Id,
+        PropertyPath: AddressId,
+        PropertyValue: Guid_Empty
+      }
+    }
+  ],
+  RuleSetsExecuted: [
+    default
+  ]
+}

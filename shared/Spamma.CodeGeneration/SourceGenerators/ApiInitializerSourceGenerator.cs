@@ -31,28 +31,30 @@ namespace Spamma.CodeGeneration.SourceGenerators
 
             var apiInputDefinition = receiver.ApiInputDefinitions[0];
 
-            var queries = new List<ApiInitializerOutputDefinitionProcessor.OutputDefinition.ApiDefinition>();
+            var queries = new List<ApiInitializerOutputDefinitionProcessor.OutputDefinition.QueryDefinition>();
             foreach (var queryProcessorInputDefinition in receiver.QueryProcessorInputDefinitions.Select(x => x.QueryDeclaration))
             {
-                queries.Add(new ApiInitializerOutputDefinitionProcessor.OutputDefinition.ApiDefinition(
+                queries.Add(new ApiInitializerOutputDefinitionProcessor.OutputDefinition.QueryDefinition(
                     queryProcessorInputDefinition.GetNamespace(context),
                     queryProcessorInputDefinition.ToString()));
             }
 
-            var commands = new List<ApiInitializerOutputDefinitionProcessor.OutputDefinition.ApiDefinition>();
+            var commands = new List<ApiInitializerOutputDefinitionProcessor.OutputDefinition.CommandDefinition>();
             foreach (var queryProcessorInputDefinition in receiver.CommandHandlerInputDefinitions.Select(x => x.CommandDeclaration))
             {
-                commands.Add(new ApiInitializerOutputDefinitionProcessor.OutputDefinition.ApiDefinition(
+                commands.Add(new ApiInitializerOutputDefinitionProcessor.OutputDefinition.CommandDefinition(
                     queryProcessorInputDefinition.GetNamespace(context),
                     queryProcessorInputDefinition.ToString()));
             }
 
-            var commandOfTs = new List<ApiInitializerOutputDefinitionProcessor.OutputDefinition.ApiDefinition>();
-            foreach (var queryProcessorInputDefinition in receiver.CommandOfTHandlerInputDefinitions.Select(x => x.CommandDeclaration))
+            var commandOfTs = new List<ApiInitializerOutputDefinitionProcessor.OutputDefinition.CommandOfTDefinition>();
+            foreach (var queryProcessorInputDefinition in receiver.CommandOfTHandlerInputDefinitions)
             {
-                commandOfTs.Add(new ApiInitializerOutputDefinitionProcessor.OutputDefinition.ApiDefinition(
-                    queryProcessorInputDefinition.GetNamespace(context),
-                    queryProcessorInputDefinition.ToString()));
+                commandOfTs.Add(new ApiInitializerOutputDefinitionProcessor.OutputDefinition.CommandOfTDefinition(
+                    queryProcessorInputDefinition.CommandDeclaration.GetNamespace(context),
+                    queryProcessorInputDefinition.CommandDeclaration.ToString(),
+                    queryProcessorInputDefinition.CommandResultDeclaration.GetNamespace(context),
+                    queryProcessorInputDefinition.CommandResultDeclaration.ToString()));
             }
 
             var outputDefinition = new ApiInitializerOutputDefinitionProcessor.OutputDefinition(

@@ -2,6 +2,8 @@
 using MediatR;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.QuickGrid;
+using Spamma.App.Client.Infrastructure.Contracts.Domain;
+using Spamma.App.Client.Infrastructure.Contracts.Querying;
 using Spamma.App.Client.Infrastructure.Domain.DomainAggregate.Commands;
 using Spamma.App.Client.Infrastructure.Querying.Domain.Queries;
 using Spamma.App.Client.Infrastructure.Querying.Domain.QueryResults;
@@ -14,7 +16,10 @@ public partial class Listing
     PaginationState pagination = new PaginationState { ItemsPerPage = 2 };
 
     [Inject]
-    private ISender Sender { get; set; } = default!;
+    private ICommander Commander { get; set; } = default!;
+
+    [Inject]
+    private IQuerier Querier { get; set; } = default!;
 
     [Inject]
     private ToastService ToastService { get; set; } = default!;
@@ -28,9 +33,10 @@ public partial class Listing
         this._domainItemProvider = async req =>
         {
             var query = new ListDomainsQuery(
-                req.StartIndex, 
-                req.Count ?? pagination.ItemsPerPage);
-            var result = await this.Sender.Send(query, req.CancellationToken);
+                req.StartIndex,
+                req.Count ?? this.pagination.ItemsPerPage);
+            var p = new { };
+            var result = await this.Querier.Send(query, req.CancellationToken);
             return GridItemsProviderResult.From(
                 items: result.Data.Items.ToList(),
                 totalItemCount: result.Data.TotalItems);
@@ -47,7 +53,7 @@ public partial class Listing
 
     private async Task OnAddSubmit()
     {
-        await this.Sender.Send(new CreateDomainCommand(Guid.NewGuid(), this._addDomainModel.DomainName));
+        await this.Commander.Send(new CreateDomainCommand(Guid.NewGuid(), this._addDomainModel.DomainName, Guid.NewGuid(), DateTime.Now));
         this.ToastService.Notify(new(ToastType.Success, $"Employee details saved successfully."));
         await this._addDomainOffCanvas.HideAsync();
         await this._grid.RefreshDataAsync();

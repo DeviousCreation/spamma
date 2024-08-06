@@ -5,12 +5,12 @@ using Spamma.App.Infrastructure.Contracts.Domain;
 
 namespace Spamma.App.Infrastructure.Domain.SubdomainAggregate.Aggregate;
 
-public class ChaosMonkeyAddress : Entity
+internal class ChaosMonkeyAddress : Entity
 {
-    public ChaosMonkeyAddress(Guid id, string address, ChaosMonkeyType type)
+    internal ChaosMonkeyAddress(Guid id, string emailAddress, ChaosMonkeyType type)
     {
         this.Id = id;
-        this.Address = address;
+        this.EmailAddress = emailAddress;
         this.Type = type;
     }
 
@@ -18,11 +18,11 @@ public class ChaosMonkeyAddress : Entity
     {
     }
 
-    public string Address { get; private set; }
+    public string EmailAddress { get; private set; } = null!;
 
     public ChaosMonkeyType Type { get; private set; }
 
-    public ResultWithError<ErrorData> ChangeType(ChaosMonkeyType type)
+    internal ResultWithError<ErrorData> ChangeType(ChaosMonkeyType type)
     {
         this.Type = type;
 

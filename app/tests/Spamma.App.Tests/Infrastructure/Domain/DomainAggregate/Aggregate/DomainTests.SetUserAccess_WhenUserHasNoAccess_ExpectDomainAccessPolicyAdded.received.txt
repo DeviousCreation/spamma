@@ -1,0 +1,11 @@
+﻿{
+  domain: {
+    Id: Guid_Empty,
+    WhenCreated: Date_MinValue,
+    CreatedUserId: Guid_Empty,
+    DomainAccessPolicies: [
+      {}
+    ]
+  },
+  IsSuccess: true
+}

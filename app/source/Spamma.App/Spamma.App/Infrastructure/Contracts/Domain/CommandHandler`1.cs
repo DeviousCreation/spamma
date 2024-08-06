@@ -3,7 +3,7 @@ using Spamma.App.Client.Infrastructure.Contracts.Domain;
 
 namespace Spamma.App.Infrastructure.Contracts.Domain;
 
-public abstract class CommandHandler<TCommand>(IEnumerable<IValidator<TCommand>> validators, ILogger logger)
+internal abstract class CommandHandler<TCommand>(IEnumerable<IValidator<TCommand>> validators, ILogger logger)
     : ICommandHandler<TCommand>
     where TCommand : ICommand
 {

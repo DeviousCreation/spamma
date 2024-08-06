@@ -10,7 +10,7 @@ namespace Spamma.App.Tests.Infrastructure.Contracts.Domain;
 public class CommandHandlerOfTTests
 {
     private readonly StubCommand _command = new();
-    private readonly Mock<ILogger> _logger = new();
+    private readonly Mock<ILogger<StubCommandHandler>> _logger = new();
     private readonly Mock<IValidator<StubCommand>> _validator = new();
 
     [Fact]
@@ -35,7 +35,7 @@ public class CommandHandlerOfTTests
         });
     }
 
-    public class StubCommandHandler(IEnumerable<IValidator<StubCommand>> validators, ILogger logger)
+    internal class StubCommandHandler(IEnumerable<IValidator<StubCommand>> validators, ILogger<StubCommandHandler> logger)
         : CommandHandler<StubCommand, StubResultData>(validators, logger)
     {
         protected override Task<CommandResult<StubResultData>> HandleInternal(StubCommand request, CancellationToken cancellationToken)
@@ -47,9 +47,9 @@ public class CommandHandlerOfTTests
         }
     }
 
-    public class StubCommand : ICommand<StubResultData>;
+    internal class StubCommand : ICommand<StubResultData>;
 
-    public record StubResultData
+    internal record StubResultData
     {
         public required string Foo { get; init; }
     }

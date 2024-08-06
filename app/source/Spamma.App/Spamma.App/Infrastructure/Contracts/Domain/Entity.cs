@@ -15,24 +15,9 @@ public abstract class Entity
     {
     }
 
-    public Guid Id { get; protected set; }
+    internal IReadOnlyCollection<INotification> DomainEvents => this._domainEvents.AsReadOnly();
 
-    public IReadOnlyCollection<INotification> DomainEvents => this._domainEvents.AsReadOnly();
-
-    public void AddDomainEvent(INotification domainEvent)
-    {
-        this._domainEvents.Add(domainEvent);
-    }
-
-    public void RemoveDomainEvent(INotification domainEvent)
-    {
-        this._domainEvents?.Remove(domainEvent);
-    }
-
-    public void ClearDomainEvents()
-    {
-        this._domainEvents?.Clear();
-    }
+    protected internal Guid Id { get; protected set; }
 
     public override bool Equals(object? obj)
     {
@@ -54,5 +39,20 @@ public abstract class Entity
     public override string ToString()
     {
         return $"{this.GetType().Name} [Id={this.Id}]";
+    }
+
+    internal void AddDomainEvent(INotification domainEvent)
+    {
+        this._domainEvents.Add(domainEvent);
+    }
+
+    internal void RemoveDomainEvent(INotification domainEvent)
+    {
+        this._domainEvents?.Remove(domainEvent);
+    }
+
+    internal void ClearDomainEvents()
+    {
+        this._domainEvents?.Clear();
     }
 }

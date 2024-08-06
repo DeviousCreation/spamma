@@ -1,0 +1,19 @@
+﻿{
+  domain: {
+    Id: Guid_1,
+    WhenCreated: DateTime_1,
+    Name: spamma.dev,
+    CreatedUserId: Guid_2,
+    DomainAccessPolicies: [
+      {}
+    ]
+  },
+  ListCheck: [
+    {
+      DomainAccessPolicies: true
+    },
+    {
+      DomainEvents: true
+    }
+  ]
+}
