@@ -11,6 +11,11 @@ internal class DomainConfiguration : IEntityTypeConfiguration<DomainQueryEntity>
         builder.HasKey(domain => domain.Id);
         builder.ToView("vw_domain");
 
+        builder.Property(domain => domain.Name);
+        builder.Property(domain => domain.WhenCreated);
+        builder.Property(domain => domain.IsDisable);
+        builder.Property(domain => domain.WhenDisabled);
+
         builder.HasMany(domain => domain.DomainAccessPolicies)
             .WithOne(domainAccessPolicy => domainAccessPolicy.Domain)
             .HasForeignKey(domainAccessPolicy => domainAccessPolicy.DomainId);

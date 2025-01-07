@@ -11,6 +11,11 @@ internal class SubdomainConfiguration : IEntityTypeConfiguration<SubdomainQueryE
         builder.HasKey(subdomain => subdomain.Id);
         builder.ToView("vw_subdomain");
 
+        builder.Property(subdomain => subdomain.Name);
+        builder.Property(subdomain => subdomain.WhenCreated);
+        builder.Property(subdomain => subdomain.IsDisabled);
+        builder.Property(subdomain => subdomain.WhenDisabled);
+
         builder.HasMany(subdomain => subdomain.Emails)
             .WithOne(email => email.Subdomain)
             .HasForeignKey(email => email.SubdomainId);

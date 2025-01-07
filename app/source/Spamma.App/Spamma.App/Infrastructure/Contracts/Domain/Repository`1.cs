@@ -4,10 +4,18 @@ using Spamma.App.Infrastructure.Database;
 
 namespace Spamma.App.Infrastructure.Contracts.Domain
 {
-    internal abstract class Repository<TAggregateRoot>(SpammaDataContext dbContext) : IRepository<TAggregateRoot>
+    internal abstract class Repository<TAggregateRoot>
+        : IRepository<TAggregateRoot>
         where TAggregateRoot : class, IAggregateRoot
     {
-        public IUnitOfWork UnitOfWork => dbContext;
+        private readonly SpammaDataContext _dbContext;
+
+        private protected Repository(IDbContextFactory<SpammaDataContext> dbContextFactory)
+        {
+            this._dbContext = dbContextFactory.CreateDbContext();
+        }
+
+        public IUnitOfWork UnitOfWork => this._dbContext;
 
         public void Add(TAggregateRoot aggregate)
         {
@@ -16,7 +24,7 @@ namespace Spamma.App.Infrastructure.Contracts.Domain
                 throw new ArgumentException("Entity not of correct type", nameof(aggregate));
             }
 
-            dbContext.Set<TAggregateRoot>().Add(entity);
+            this._dbContext.Set<TAggregateRoot>().Add(entity);
         }
 
         public void ForceUpdate(TAggregateRoot aggregate)
@@ -26,7 +34,7 @@ namespace Spamma.App.Infrastructure.Contracts.Domain
                 throw new ArgumentException("Entity not of correct type", nameof(aggregate));
             }
 
-            dbContext.Set<TAggregateRoot>().Update(entity);
+            this._dbContext.Set<TAggregateRoot>().Update(entity);
         }
 
         public void Delete(IAggregateRoot aggregate)
@@ -36,12 +44,12 @@ namespace Spamma.App.Infrastructure.Contracts.Domain
                 throw new ArgumentException("Entity not of correct type", nameof(aggregate));
             }
 
-            dbContext.Set<TAggregateRoot>().Remove(entity);
+            this._dbContext.Set<TAggregateRoot>().Remove(entity);
         }
 
         public async Task<Maybe<TAggregateRoot>> FindOne(Specification<TAggregateRoot> specification, CancellationToken cancellationToken = default, bool refresh = true)
         {
-            var data = await dbContext.Set<TAggregateRoot>().SingleOrDefaultAsync(specification.ToExpression(), cancellationToken);
+            var data = await this._dbContext.Set<TAggregateRoot>().SingleOrDefaultAsync(specification.ToExpression(), cancellationToken);
             if (data == null)
             {
                 return Maybe<TAggregateRoot>.Nothing;
@@ -57,15 +65,17 @@ namespace Spamma.App.Infrastructure.Contracts.Domain
 
         public async Task<IList<TAggregateRoot>> FindMany(Specification<TAggregateRoot> specification, CancellationToken cancellationToken = default, bool refresh = true)
         {
-            var data = await dbContext.Set<TAggregateRoot>().Where(specification.ToExpression())
+            var data = await this._dbContext.Set<TAggregateRoot>().Where(specification.ToExpression())
                 .ToListAsync(cancellationToken);
 
-            if (refresh)
+            if (!refresh)
             {
-                foreach (TAggregateRoot entity in data)
-                {
-                    await this.Refresh(entity);
-                }
+                return data;
+            }
+
+            foreach (TAggregateRoot entity in data)
+            {
+                await this.Refresh(entity);
             }
 
             return data;
@@ -79,14 +89,14 @@ namespace Spamma.App.Infrastructure.Contracts.Domain
 
         protected virtual void Dispose(bool disposing)
         {
-            dbContext.Dispose();
+            this._dbContext.Dispose();
         }
 
         private async Task Refresh(TAggregateRoot? aggregate)
         {
             if (aggregate != null)
             {
-                await dbContext.Entry(aggregate).ReloadAsync();
+                await this._dbContext.Entry(aggregate).ReloadAsync();
             }
         }
     }

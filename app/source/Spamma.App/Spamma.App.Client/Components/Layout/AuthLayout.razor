@@ -1,0 +1,21 @@
+﻿@using Microsoft.AspNetCore.Components.Sections
+@inherits MainLayout
+
+<div id="auth-layout">
+    <div class="sidenav">
+        <div class="login-main-text">
+            <SectionOutlet SectionId="LeftContent" />
+        </div>
+    </div>
+    <div class="main">
+        <div class="col-md-6 col-sm-12">
+            <div class="login-form">
+                @Body
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    public static object LeftContent = new();
+}

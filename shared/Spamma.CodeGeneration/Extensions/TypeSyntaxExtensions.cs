@@ -5,10 +5,9 @@ namespace Spamma.CodeGeneration.Extensions
 {
     internal static class TypeSyntaxExtensions
     {
-        internal static string GetNamespace(this TypeSyntax typeArgument, GeneratorExecutionContext context)
+        internal static string GetNamespace(this TypeSyntax typeSyntax, SemanticModel semanticModel)
         {
-            var model = context.Compilation.GetSemanticModel(typeArgument.SyntaxTree);
-            var typeSymbol = model.GetSymbolInfo(typeArgument).Symbol as INamedTypeSymbol;
+            var typeSymbol = semanticModel.GetSymbolInfo(typeSyntax).Symbol as INamedTypeSymbol;
 
             var namespaceName = string.Empty;
             if (typeSymbol != null)

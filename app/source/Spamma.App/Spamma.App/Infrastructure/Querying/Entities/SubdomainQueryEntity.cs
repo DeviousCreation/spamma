@@ -20,7 +20,17 @@ internal class SubdomainQueryEntity : IQueryEntity
 
     internal Guid DomainId { get; private set; }
 
+    internal Guid CreatedUserId { get; private set; }
+
+    internal DateTime WhenCreated { get; private set; }
+
+    internal bool IsDisabled { get; private set; }
+
+    internal DateTime? WhenDisabled { get; private set; }
+
     internal DomainQueryEntity? Domain { get; private set; }
+
+    internal UserQueryEntity? CreatedUser { get; private set; }
 
     internal IReadOnlyList<ChaosMonkeyAddressQueryEntity> ChaosMonkeyAddresses { get; private set; }
 

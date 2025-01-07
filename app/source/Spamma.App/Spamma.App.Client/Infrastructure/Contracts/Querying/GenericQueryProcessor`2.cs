@@ -6,6 +6,7 @@ namespace Spamma.App.Client.Infrastructure.Contracts.Querying;
 public class GenericQueryProcessor<TQuery, TResult>(IHttpClientFactory httpClientFactory)
     : IQueryProcessor<TQuery, TResult>
     where TQuery : IQuery<TResult>
+    where TResult : IQueryResult
 {
     public async Task<QueryResult<TResult>> Handle(TQuery request, CancellationToken cancellationToken)
     {

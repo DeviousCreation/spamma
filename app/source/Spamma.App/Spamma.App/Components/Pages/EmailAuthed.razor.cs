@@ -20,7 +20,11 @@ public partial class EmailAuthed : ComponentBase
     [Inject]
     private IHttpContextAccessor HttpContextAccessor { get; set; } = default!;
 
-    public override async Task SetParametersAsync(ParameterView parameters)
+    [Inject]
+    private NavigationManager NavigationManager { get; set; } = default!;
+
+    protected override
+        async Task OnParametersSetAsync()
     {
         var result = await this.Commander.Send<CompleteAuthViaEmailCommand, CompleteAuthViaEmailCommandResult>(new CompleteAuthViaEmailCommand(this.Token));
 
@@ -29,6 +33,9 @@ public partial class EmailAuthed : ComponentBase
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Sid, result.Data.UserId.ToString()),
+                new Claim(ClaimTypes.Email, result.Data.Email),
+                new Claim(ClaimTypes.Name, result.Data.Name),
+                new Claim(ClaimTypes.Role, "0"),
             };
 
             var claimsIdentity = new ClaimsIdentity(
@@ -36,10 +43,12 @@ public partial class EmailAuthed : ComponentBase
 
             var authProperties = new AuthenticationProperties();
 
-            await this.HttpContextAccessor.HttpContext.SignInAsync(
+            await this.HttpContextAccessor.HttpContext!.SignInAsync(
                 CookieAuthenticationDefaults.AuthenticationScheme,
                 new ClaimsPrincipal(claimsIdentity),
                 authProperties);
+
+            this.NavigationManager.NavigateTo("/inbox");
         }
     }
 }

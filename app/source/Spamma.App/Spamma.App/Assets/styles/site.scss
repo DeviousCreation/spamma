@@ -1,0 +1,185 @@
+$white: #ffffff;
+
+$theme-colors: (
+        "light":      #f0eeff,
+        "dark":       #040707,
+        "primary":    #36408b,
+        "secondary":  #4f5497,
+        "info":       #29c9f8,
+        "accent1":    #1e2031,
+        "accent2":    #564b66,
+        "accent3":    #aa9cb8,
+        "success":    #0c9c5b,
+        "warning":    #dfc90d,
+        "danger":     #ed1d04,
+);
+
+@import "bootstrap";
+@import "_layouts/_auth-layout";
+@import "_pages/_landing";
+
+#index {
+  display: grid;
+  grid-template-columns: minmax(1rem, 1fr) minmax(1rem, 4fr);
+  min-height: calc(100vh - (var(--header-size) + var(--footer-size)));
+  #messages-container {
+    min-height: calc(100vh - (var(--header-size) + var(--footer-size)));
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid #cccfcf;
+    min-width: 345px;
+    #remaining-quota {
+      padding: 1rem;
+    }
+  }
+  #message-container {
+    min-height: calc(100vh - (var(--header-size) + var(--footer-size)));
+  }
+  #message-listing {
+    display: flex;
+    flex-direction: column;
+
+    overflow-y: scroll;
+    flex: 1 1 auto;
+    border-bottom: 1px solid #cccfcf;
+    input {
+      display: none;
+    }
+
+
+    input:checked+label.message-meta-item {
+      background-color: var(--spamma-theme-colour-5);
+
+    }
+
+    .message-meta-item-container {
+      padding: 0.75rem;
+      cursor: pointer;
+      &:nth-child(even) {
+        background-color: #fff;
+      }
+      &:nth-child(odd) {
+        background-color: #f8f8f8;
+      }
+
+
+      .message-meta-header {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        margin-bottom: 0.75rem;
+        .message-meta-header-to {
+          color: #7e859e;
+        }
+        .message-meta-header-date {
+          color: #bfc4d1;
+          font-size: 0.75rem;
+        }
+
+      }
+      .message-meta-subject {
+        font-size: 0.85rem;
+      }
+    }
+  }
+
+  #message-container {
+    padding: 1rem;
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+    .subject {
+      font-size: 1.3rem;
+      font-weight: bold;
+      margin-bottom: 2rem;
+    }
+    .message-details {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+      .addresses div{
+        &:first-child {
+          margin-bottom: 0.5rem;
+        }
+        .address {
+          font-style: italic;
+        }
+      }
+    }
+    .message-content {
+      flex: 1 1 auto;
+      display: flex;
+      flex-direction: column;
+      .tab {
+        overflow: hidden;
+        border: 1px solid #ccc;
+        background-color: #f1f1f1;
+        button {
+          background-color: inherit;
+          float: left;
+          border: none;
+          outline: none;
+          cursor: pointer;
+          padding: 14px 16px;
+          transition: 0.3s;
+          font-size: 17px;
+          &:hover {
+            background-color: #ddd;
+          }
+          &.active {
+            background-color: #ccc;
+          }
+        }
+      }
+      .tab-content{
+        flex: 1 1 auto;
+        overflow-y: scroll;
+        height: 0;
+        iframe {
+          border: none;
+          width: 100%;
+          height: 100%;
+        }
+        pre {
+          white-space: pre-wrap;
+          word-wrap: break-word;
+        }
+      }
+    }
+
+  }
+
+  .attachment-listing {
+    display: flex;
+    padding: 1rem;
+    .attachment-item {
+      padding: 1rem;
+      display: flex;
+      background-color: #f1f1f1;
+      border: none;
+      cursor: pointer;
+      .attachment-icon {
+        //background-image: url('../../images/attachment.svg');
+        width: 2.5rem;
+        height: 3rem;
+        background-repeat: no-repeat;
+        background-position: left;
+        filter: opacity(0.75);
+      }
+      .attachment-details {
+        display: flex;
+        flex-direction: column;
+        align-items: end;
+        .attachment-name {
+          color: #7e859e;
+          margin-bottom: 0.5rem;
+        }
+        .attachment-size {
+          font-size: .85rem;
+        }
+      }
+    }
+
+  }
+}

@@ -19,9 +19,5 @@ internal class AlterUserAccessToDomainCommandValidator : AbstractValidator<Alter
         this.RuleFor(x => x.DomainAccessPolicyType)
             .NotEmpty()
             .WithErrorCode(ValidationCodes.PropertyIsRequired);
-
-        this.RuleFor(x => x.WhenUpdated)
-            .GreaterThan(DateTime.MinValue)
-            .WithErrorCode(ValidationCodes.PropertyIsRequired);
     }
 }

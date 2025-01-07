@@ -1,0 +1,17 @@
+﻿{
+  "compilerOptions": {
+    "alwaysStrict": false,
+    "noImplicitAny": false,
+    "noEmitOnError": true,
+    "removeComments": false,
+    "sourceMap": false,
+    "target": "ES6",
+    "outDir": "wwwroot"
+  },
+  "include": [
+    "Assets/scripts/*.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}

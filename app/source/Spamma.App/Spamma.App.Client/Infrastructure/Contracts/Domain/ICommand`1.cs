@@ -2,4 +2,5 @@
 
 namespace Spamma.App.Client.Infrastructure.Contracts.Domain;
 
-public interface ICommand<T> : IRequest<CommandResult<T>>;
+public interface ICommand<TResult> : IRequest<CommandResult<TResult>>
+    where TResult : ICommandResult;

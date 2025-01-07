@@ -20,4 +20,12 @@ internal static class EventNames
     internal const string UserVerified = "User.UserVerified";
     internal const string UserDetailsUpdated = "User.UserDetailsUpdated";
     internal const string SignInProcessStarted = "User.SignInProcessStarted";
+    internal const string DomainDisabled = "Domain.DomainDisabled";
+    internal const string UserEnabled = "User.UserEnabled";
+    internal const string UserDisabled = "User.UserDisabled";
+    internal const string UserRevokedAccessToSubdomain = "Subdomain.UserRevokedAccessToSubdomain";
+    internal const string SubdomainDisabled = "Subdomain.SubdomainDisabled";
+    internal const string UserAccessAlteredAgainstSubdomain = "Subdomain.UserAccessAlteredAgainstSubdomain";
+    internal const string UserAllowedAccessToSubdomain = "Subdomain.UserAllowedAccessToSubdomain";
+    internal const string UserRequestedVerification = "User.UserRequestedVerification";
 }

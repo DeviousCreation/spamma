@@ -1,0 +1,29 @@
+﻿@using Microsoft.AspNetCore.Authorization
+@inherits MainLayout
+
+
+<div class="bb-page">
+
+    <Sidebar2 Href="/"
+              IconName="IconName.BootstrapFill"
+              Title="Blazor Bootstrap"
+              BadgeText="v2.1.0"
+              DataProvider="Sidebar2DataProvider" />
+
+    <main>
+        <div class="bb-top-row px-4 d-flex justify-content-end">
+            <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
+        </div>
+
+        <article class="content px-4">
+            <div class="py-2">Page content goes here</div>
+        </article>
+    </main>
+
+</div>
+
+<Toasts class="p-3" AutoHide="true" Delay="4000" Placement="ToastsPlacement.TopRight" />
+
+
+
+

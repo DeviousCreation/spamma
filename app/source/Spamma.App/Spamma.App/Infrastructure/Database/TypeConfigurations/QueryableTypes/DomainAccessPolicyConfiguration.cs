@@ -13,6 +13,10 @@ internal class DomainAccessPolicyConfiguration : IEntityTypeConfiguration<Domain
             domainAccessPolicy.UserId,
             domainAccessPolicy.DomainId,
         });
+        builder.Property(domainAccessPolicy => domainAccessPolicy.PolicyType);
+        builder.Property(domainAccessPolicy => domainAccessPolicy.IsRevoked);
+        builder.Property(domainAccessPolicy => domainAccessPolicy.WhenAssigned);
+        builder.Property(domainAccessPolicy => domainAccessPolicy.WhenRevoked);
         builder.ToView("vw_domain_access_policy");
     }
 }

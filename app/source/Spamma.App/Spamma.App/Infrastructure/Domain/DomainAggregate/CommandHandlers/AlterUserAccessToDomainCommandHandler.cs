@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using NodaTime;
 using Spamma.App.Client.Infrastructure.Constants;
 using Spamma.App.Client.Infrastructure.Contracts.Domain;
 using Spamma.App.Client.Infrastructure.Domain.DomainAggregate.Commands;
@@ -7,14 +8,19 @@ using Spamma.App.Infrastructure.Domain.DomainAggregate.IntegrationEvents;
 
 namespace Spamma.App.Infrastructure.Domain.DomainAggregate.CommandHandlers;
 
-internal class AlterUserAccessToDomainCommandHandler(IEnumerable<IValidator<AlterUserAccessToDomainCommand>> validators,
+internal class AlterUserAccessToDomainCommandHandler(
+    IEnumerable<IValidator<AlterUserAccessToDomainCommand>> validators,
     ILogger<AlterUserAccessToDomainCommandHandler> logger,
-    IRepository<Domain.DomainAggregate.Aggregate.Domain> repository, IIntegrationEventPublisher integrationEventPublisher)
+    IRepository<Domain.DomainAggregate.Aggregate.Domain> repository,
+    IIntegrationEventPublisher integrationEventPublisher,
+    IClock clock)
     : CommandHandler<AlterUserAccessToDomainCommand>(validators, logger)
 {
-    protected override async Task<CommandResult> HandleInternal(AlterUserAccessToDomainCommand request, CancellationToken cancellationToken)
+    protected override async Task<CommandResult> HandleInternal(
+        AlterUserAccessToDomainCommand request, CancellationToken cancellationToken)
     {
-        var domain = await repository.FindOne(new ByIdSpecification<Aggregate.Domain>(request.DomainId), cancellationToken);
+        var domain = await repository.FindOne(
+            new ByIdSpecification<Aggregate.Domain>(request.DomainId), cancellationToken);
 
         if (domain.HasNoValue)
         {
@@ -25,7 +31,8 @@ internal class AlterUserAccessToDomainCommandHandler(IEnumerable<IValidator<Alte
 
         var entity = domain.Value;
 
-        var result = entity.SetUserAccess(request.UserId, request.DomainAccessPolicyType, request.WhenUpdated);
+        var result = entity.SetUserAccess(
+            request.UserId, request.DomainAccessPolicyType, clock.GetCurrentInstant().ToDateTimeUtc());
 
         if (result.IsFailure)
         {
@@ -38,7 +45,9 @@ internal class AlterUserAccessToDomainCommandHandler(IEnumerable<IValidator<Alte
         if (dbResult.IsSuccess)
         {
             await integrationEventPublisher.PublishAsync(
-                new UserAccessAlteredAgainstDomainIntegrationEvent(request.DomainId, request.DomainId, request.DomainAccessPolicyType), cancellationToken: cancellationToken);
+                new UserAccessAlteredAgainstDomainIntegrationEvent(
+                    request.DomainId, request.DomainId, request.DomainAccessPolicyType),
+                cancellationToken: cancellationToken);
 
             return CommandResult.Succeeded();
         }

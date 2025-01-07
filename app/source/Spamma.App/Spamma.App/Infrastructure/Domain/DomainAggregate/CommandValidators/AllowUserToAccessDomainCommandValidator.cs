@@ -19,9 +19,5 @@ internal class AllowUserToAccessDomainCommandValidator : AbstractValidator<Allow
         this.RuleFor(x => x.DomainAccessPolicyType)
             .NotEmpty()
             .WithErrorCode(ValidationCodes.PropertyIsRequired);
-
-        this.RuleFor(x => x.WhenAllowed)
-            .GreaterThan(DateTime.MinValue)
-            .WithErrorCode(ValidationCodes.PropertyIsRequired);
     }
 }

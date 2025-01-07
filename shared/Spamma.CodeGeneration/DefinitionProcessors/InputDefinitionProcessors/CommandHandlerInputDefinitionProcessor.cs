@@ -1,23 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
+﻿using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Spamma.CodeGeneration.Contracts;
 
 namespace Spamma.CodeGeneration.DefinitionProcessors.InputDefinitionProcessors
 {
-    internal class CommandHandlerInputDefinitionProcessor : IInputDefinitionProcessor<CommandHandlerInputDefinitionProcessor.InputDefinition>
+    internal class CommandHandlerInputDefinitionProcessor : InputDefinitionProcessor<CommandHandlerInputDefinitionProcessor.InputDefinition>
     {
-        public IEnumerable<InputDefinition> Process(SyntaxNode syntaxNode)
+        public override bool CanProcess(SyntaxNode syntaxNode)
         {
             if (!(syntaxNode is ClassDeclarationSyntax classDeclarationSyntax))
             {
-                return Array.Empty<InputDefinition>();
+                return false;
             }
 
-            var definitions = new List<InputDefinition>();
             foreach (var baseType in classDeclarationSyntax.BaseList?.Types ?? Enumerable.Empty<BaseTypeSyntax>())
             {
                 if (!(baseType is PrimaryConstructorBaseTypeSyntax simpleBaseTypeSyntax))
@@ -31,12 +27,18 @@ namespace Spamma.CodeGeneration.DefinitionProcessors.InputDefinitionProcessors
                     continue;
                 }
 
-                definitions.Add(new InputDefinition(
-                    genericNameSyntax.TypeArgumentList.Arguments[0]));
-                break;
+                return true;
             }
 
-            return definitions;
+            return false;
+        }
+
+        protected override InputDefinition ProcessInternal(SyntaxNode syntaxNode)
+        {
+            return new InputDefinition(((ClassDeclarationSyntax)syntaxNode).BaseList
+                .Types.Select(type =>
+                    ((GenericNameSyntax)((PrimaryConstructorBaseTypeSyntax)type).Type).TypeArgumentList.Arguments[0])
+                .First());
         }
 
         internal class InputDefinition : IInputDefinition

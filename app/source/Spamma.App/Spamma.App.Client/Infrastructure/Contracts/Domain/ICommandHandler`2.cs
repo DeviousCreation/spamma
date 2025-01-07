@@ -6,4 +6,5 @@ namespace Spamma.App.Client.Infrastructure.Contracts.Domain;
 
 public interface ICommandHandler<TCommand, TResult>
     : IRequestHandler<TCommand, CommandResult<TResult>>
-    where TCommand : ICommand<TResult>;
+    where TCommand : ICommand<TResult>
+    where TResult : ICommandResult;

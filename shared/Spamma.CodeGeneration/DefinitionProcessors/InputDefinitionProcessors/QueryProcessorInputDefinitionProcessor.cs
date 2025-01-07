@@ -1,23 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Spamma.CodeGeneration.Contracts;
 
 namespace Spamma.CodeGeneration.DefinitionProcessors.InputDefinitionProcessors
 {
-    internal class QueryProcessorInputDefinitionProcessor : IInputDefinitionProcessor<QueryProcessorInputDefinitionProcessor.InputDefinition>
+    internal class QueryProcessorInputDefinitionProcessor : InputDefinitionProcessor<QueryProcessorInputDefinitionProcessor.InputDefinition>
     {
-        public IEnumerable<InputDefinition> Process(SyntaxNode syntaxNode)
+        public override bool CanProcess(SyntaxNode syntaxNode)
         {
-            if (!(syntaxNode is ClassDeclarationSyntax classDeclarationSyntax))
+            if (!(syntaxNode is ClassDeclarationSyntax classDeclaration))
             {
-                return Array.Empty<InputDefinition>();
+                return false;
             }
 
-            var definitions = new List<InputDefinition>();
-            foreach (var baseType in classDeclarationSyntax.BaseList?.Types ?? Enumerable.Empty<BaseTypeSyntax>())
+            if (classDeclaration.BaseList == null || classDeclaration.BaseList.Types.Count == 0)
+            {
+                return false;
+            }
+
+            foreach (var baseType in classDeclaration.BaseList.Types)
             {
                 if (!(baseType is SimpleBaseTypeSyntax simpleBaseTypeSyntax))
                 {
@@ -30,12 +32,18 @@ namespace Spamma.CodeGeneration.DefinitionProcessors.InputDefinitionProcessors
                     continue;
                 }
 
-                definitions.Add(new InputDefinition(
-                    genericNameSyntax.TypeArgumentList.Arguments[0]));
-                break;
+                return true;
             }
 
-            return definitions;
+            return false;
+        }
+
+        protected override InputDefinition ProcessInternal(SyntaxNode syntaxNode)
+        {
+            return new InputDefinition(((ClassDeclarationSyntax)syntaxNode).BaseList
+                .Types.Select(type =>
+                    ((GenericNameSyntax)((SimpleBaseTypeSyntax)type).Type).TypeArgumentList.Arguments[0])
+                .First());
         }
 
         internal class InputDefinition : IInputDefinition

@@ -10,10 +10,13 @@ using Spamma.App.Infrastructure.Domain.UserAggregate.QuerySpecifications;
 
 namespace Spamma.App.Infrastructure.Domain.UserAggregate.CommandHandlers;
 
-internal class StartAuthViaEmailCommandHandler(IEnumerable<IValidator<StartAuthViaEmailCommand>> validators, ILogger<InviteUserCommandHandler> logger,
-    IRepository<User> repository, IIntegrationEventPublisher integrationEventPublisher, IClock clock) : CommandHandler<StartAuthViaEmailCommand>(validators, logger)
+internal class StartAuthViaEmailCommandHandler(
+    IEnumerable<IValidator<StartAuthViaEmailCommand>> validators, ILogger<StartAuthViaEmailCommandHandler> logger,
+    IRepository<User> repository, IIntegrationEventPublisher integrationEventPublisher, IClock clock) :
+    CommandHandler<StartAuthViaEmailCommand>(validators, logger)
 {
-    protected override async Task<CommandResult> HandleInternal(StartAuthViaEmailCommand request, CancellationToken cancellationToken)
+    protected override async Task<CommandResult> HandleInternal(
+        StartAuthViaEmailCommand request, CancellationToken cancellationToken)
     {
         var maybe = await repository.FindOne(new ByEmailAddressSpecification(request.EmailAddress), cancellationToken);
 
@@ -40,7 +43,9 @@ internal class StartAuthViaEmailCommandHandler(IEnumerable<IValidator<StartAuthV
 
         if (dbResult.IsSuccess)
         {
-            await integrationEventPublisher.PublishAsync(new EmailAuthStartedIntegrationEvent(user.Id, user.EmailAddress, user.SecurityStamp, now), cancellationToken);
+            await integrationEventPublisher.PublishAsync(
+                new EmailAuthStartedIntegrationEvent(user.Id, user.Name, user.EmailAddress, user.SecurityStamp, now),
+                cancellationToken);
             return CommandResult.Succeeded();
         }
 

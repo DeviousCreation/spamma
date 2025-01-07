@@ -75,4 +75,9 @@ public class CommandResult
     {
         return new CommandResult();
     }
+
+    public static CommandResult Unauthorized()
+    {
+        return new CommandResult(new ErrorData(ErrorCodes.NotAuthorized));
+    }
 }

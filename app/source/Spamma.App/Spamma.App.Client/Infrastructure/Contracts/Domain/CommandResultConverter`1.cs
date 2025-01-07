@@ -4,9 +4,10 @@ using Spamma.App.Client.Infrastructure.Constants;
 
 namespace Spamma.App.Client.Infrastructure.Contracts.Domain;
 
-public class CommandResultConverter<T> : JsonConverter<CommandResult<T>>
+public class CommandResultConverter<TResult> : JsonConverter<CommandResult<TResult>>
+    where TResult : ICommandResult
 {
-    public override CommandResult<T>? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    public override CommandResult<TResult>? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
         if (reader.TokenType != JsonTokenType.StartObject)
         {
@@ -16,7 +17,7 @@ public class CommandResultConverter<T> : JsonConverter<CommandResult<T>>
         CommandResultStatus status = CommandResultStatus.Succeeded;
         ErrorData? errorData = null;
         CommandValidationResult? validationResult = null;
-        T? data = default;
+        TResult? data = default;
 
         while (reader.Read())
         {
@@ -45,7 +46,7 @@ public class CommandResultConverter<T> : JsonConverter<CommandResult<T>>
                     validationResult = JsonSerializer.Deserialize<CommandValidationResult>(ref reader, options);
                     break;
                 case "Data":
-                    data = JsonSerializer.Deserialize<T>(ref reader, options);
+                    data = JsonSerializer.Deserialize<TResult>(ref reader, options);
                     break;
                 default:
                     throw new JsonException();
@@ -60,27 +61,27 @@ public class CommandResultConverter<T> : JsonConverter<CommandResult<T>>
                     throw new JsonException();
                 }
 
-                return CommandResult<T>.Succeeded(data);
+                return CommandResult<TResult>.Succeeded(data);
             case CommandResultStatus.Failed:
                 if (errorData == null)
                 {
                     throw new JsonException();
                 }
 
-                return CommandResult<T>.Failed(errorData);
+                return CommandResult<TResult>.Failed(errorData);
             case CommandResultStatus.Invalid:
                 if (validationResult == null)
                 {
                     throw new JsonException();
                 }
 
-                return CommandResult<T>.Invalid(validationResult);
+                return CommandResult<TResult>.Invalid(validationResult);
             default:
                 throw new JsonException();
         }
     }
 
-    public override void Write(Utf8JsonWriter writer, CommandResult<T> value, JsonSerializerOptions options)
+    public override void Write(Utf8JsonWriter writer, CommandResult<TResult> value, JsonSerializerOptions options)
     {
         writer.WriteStartObject();
         writer.WriteNumber("Status", (int)value.Status);

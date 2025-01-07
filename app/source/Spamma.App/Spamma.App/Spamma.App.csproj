@@ -1,31 +1,40 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
     <PropertyGroup>
-        <TargetFramework>net8.0</TargetFramework>
+        <TargetFramework>net9.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
+        <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
+        <PreserveCompilationContext>true</PreserveCompilationContext>
+        <LangVersion>default</LangVersion>
     </PropertyGroup>
-
     <ItemGroup>
-        <PackageReference Include="Blazor.Bootstrap" Version="3.0.0-preview.3" />
-        <PackageReference Include="DotNetCore.CAP" Version="8.2.0" />
-        <PackageReference Include="DotNetCore.CAP.InMemoryStorage" Version="8.2.0" />
-        <PackageReference Include="EFCore.NamingConventions" Version="8.0.3" />
+        <PackageReference Include="Blazor.Bootstrap" Version="3.2.0" />
+        <PackageReference Include="DotNetCore.CAP" Version="8.3.2" />
+        <PackageReference Include="DotNetCore.CAP.InMemoryStorage" Version="8.3.2" />
+        <PackageReference Include="EFCore.NamingConventions" Version="9.0.0" />
         <PackageReference Include="EntityFrameworkCore.Exceptions.PostgreSQL" Version="8.1.3" />
         <PackageReference Include="FluentEmail.Core" Version="3.0.2" />
         <PackageReference Include="FluentEmail.Razor" Version="3.0.2" />
         <PackageReference Include="FluentEmail.Smtp" Version="3.0.2" />
+        <PackageReference Include="Louw.PublicSuffix" Version="1.2.2" />
+        <PackageReference Include="MaintenanceModeMiddleware" Version="1.0.6" />
         <PackageReference Include="MaybeMonad" Version="1.0.1.1" />
-        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.7" />
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.7">
+        <PackageReference Include="MediatR.Behaviors.Authorization" Version="12.2.0" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="9.0.0" />
+        <PackageReference Include="MimeKitLite" Version="4.9.0" />
+        <PackageReference Include="SmtpServer" Version="10.0.1" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.0" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.0">
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="NodaTime" Version="3.1.11" />
-        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.4" />
+        <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="9.0.0" />
+        <PackageReference Include="NodaTime" Version="3.2.0" />
+        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.2" />
         <PackageReference Include="ResultMonad" Version="1.0.1" />
         <PackageReference Include="Savorboard.CAP.InMemoryMessageQueue" Version="8.2.1" />
-        <PackageReference Include="SonarAnalyzer.CSharp" Version="9.30.0.95878">
+        <PackageReference Include="SonarAnalyzer.CSharp" Version="10.4.0.108396">
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
@@ -33,23 +42,49 @@
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.0.1" />
-        <PackageReference Include="Z.EntityFramework.Plus.EFCore" Version="8.103.1" />
-        <ProjectReference Include="..\Spamma.App.Client\Spamma.App.Client.csproj"/>
-        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.7" />
+        <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.3.0" />
+        <PackageReference Include="Z.EntityFramework.Plus.EFCore" Version="9.103.6.4" />
+        <ProjectReference Include="..\Spamma.App.Client\Spamma.App.Client.csproj" />
+        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="9.0.0" />
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Infrastructure\Contracts\Web\" />
+      <Folder Include="Assets\scripts\" />
       <Folder Include="Infrastructure\Database\Migrations\" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\..\..\shared\Spamma.CodeGeneration\Spamma.CodeGeneration.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+        <InternalsVisibleTo Include="Spamma.App.Tests" />
+        <InternalsVisibleTo Include="Spamma.TestHarnesses.EmailSender" />
+        
+    </ItemGroup>
+
+
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\shared\Spamma.CodeGeneration\Spamma.CodeGeneration.csproj" PrivateAssets="all" ReferenceOutputAssembly="false" OutputItemType="Analyzer" />
+  </ItemGroup>
+
+    <ItemGroup>
+      <Content Remove="Infrastructure\Emailing\Sending\Template.cshtml" />
     </ItemGroup>
 
     <ItemGroup>
-        <InternalsVisibleTo Include="Spamma.App.Tests" />
+      <None Remove="Infrastructure\Emailing\Sending\Template.html" />
+      <EmbeddedResource Include="Infrastructure\Emailing\Sending\Template.html" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="Components\Pages\Setup\Step0Welcome.razor" />
+      <_ContentIncludedByDefault Remove="Components\Pages\Setup\Step100Complete.razor" />
+      <_ContentIncludedByDefault Remove="Components\Pages\Setup\Step1CreateEncryptionKeys.razor" />
+      <_ContentIncludedByDefault Remove="Components\Pages\Setup\Step2CreateBreakGlassAccount.razor" />
+      <_ContentIncludedByDefault Remove="Components\Pages\Setup\Step3OutgoingEmailProvider.razor" />
+      <_ContentIncludedByDefault Remove="Components\Pages\Setup\Step4AddDnsProvider.razor" />
+      <_ContentIncludedByDefault Remove="Components\Pages\Setup\Step5AddDomain.razor" />
+      <_ContentIncludedByDefault Remove="Components\Pages\Setup\Step6CreateRoles.razor" />
+      <_ContentIncludedByDefault Remove="Components\Pages\Setup\Step7InviteUsers.razor" />
+      <_ContentIncludedByDefault Remove="Components\Layout\SetupLayout.razor" />
     </ItemGroup>
 
     <Import Project="..\..\..\..\shared\Spamma.Shared\Spamma.Shared.projitems" Label="Shared" />

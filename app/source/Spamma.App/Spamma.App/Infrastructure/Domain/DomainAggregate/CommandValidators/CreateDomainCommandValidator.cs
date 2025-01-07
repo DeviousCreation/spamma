@@ -12,9 +12,6 @@ internal class CreateDomainCommandValidator : AbstractValidator<CreateDomainComm
     public CreateDomainCommandValidator(IDbContextFactory<SpammaDataContext> dbContextFactory)
     {
         var dbContext = dbContextFactory.CreateDbContext();
-        this.RuleFor(x => x.DomainId)
-            .NotEmpty()
-            .WithErrorCode(ValidationCodes.PropertyIsRequired);
 
         this.RuleFor(x => x.DomainName)
             .NotEmpty()
@@ -25,9 +22,5 @@ internal class CreateDomainCommandValidator : AbstractValidator<CreateDomainComm
                     .AnyAsync(d => d.Name == domainName);
                 return !exists;
             });
-
-        this.RuleFor(x => x.CreatedByUserId)
-            .NotEmpty()
-            .WithErrorCode(ValidationCodes.PropertyIsRequired);
     }
 }

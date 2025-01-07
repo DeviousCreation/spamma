@@ -1,0 +1,45 @@
+﻿@page "/settings/domains"
+@layout AppLayout
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using Spamma.App.Client.Components.Layout
+@rendermode InteractiveAuto
+<ConfirmDialog @ref="_confirmDialog" />
+<h3>Domains</h3>
+<Button Color="ButtonColor.Primary" @onclick="OnAddClick" > Add </Button>
+<Card>
+    <CardBody>
+        <CardTitle></CardTitle>
+        <CardText>
+            <QuickGrid ItemsProvider="@_domainItemProvider" @ref="_grid" Pagination="@pagination">
+                <PropertyColumn Property="@(p => p.DomainId)" Sortable="false" />
+                <PropertyColumn Property="@(p => p.Name)" Sortable="false" />
+                <TemplateColumn>
+                    <Dropdown Color="DropdownColor.Primary" Split="true">
+                        <DropdownActionButton @onclick="() => OnViewClick(context)">View</DropdownActionButton>
+                        <DropdownToggleButton />
+                        <DropdownMenu>
+                            <DropdownItem Type="DropdownItemType.Button" @onclick="() => OnDisableClick(context)">Disable</DropdownItem>
+                        </DropdownMenu>
+                    </Dropdown>
+                </TemplateColumn>
+            </QuickGrid>
+        </CardText>
+        <CardFooter>
+            <Paginator State="@pagination" />    
+        </CardFooter>
+    </CardBody>
+</Card>
+
+<Offcanvas @ref="_addDomainOffCanvas" title="Add Domain">
+    <BodyTemplate>
+        <EditForm Model=@_addDomainModel OnSubmit="this.OnAddSubmit">
+            <div class="form-group">
+                <label for="domain-name">Domain Name</label>
+                <InputText @bind-Value="@_addDomainModel.DomainName" class="form-control" id="domain-name" placeholder="example.com" />
+            </div>
+            
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </EditForm>
+        
+    </BodyTemplate>
+</Offcanvas>

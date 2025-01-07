@@ -9,6 +9,11 @@ internal class EmailConfiguration : IEntityTypeConfiguration<EmailQueryEntity>
     public void Configure(EntityTypeBuilder<EmailQueryEntity> builder)
     {
         builder.HasKey(email => email.Id);
+
+        builder.Property(email => email.EmailAddress);
+        builder.Property(email => email.Subject);
+        builder.Property(email => email.WhenSent);
+
         builder.ToView("vw_email");
     }
 }

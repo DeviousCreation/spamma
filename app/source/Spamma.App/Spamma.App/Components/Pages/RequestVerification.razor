@@ -1,0 +1,10 @@
+﻿@layout MainLayout
+@page "/request-verification"
+@using Spamma.App.Client.Components.Layout
+<h3>SignIn</h3>
+<EditForm Model="Model" method="post" OnSubmit="OnSubmit" FormName="signin">
+    <label>Email Address</label>
+    <InputText @bind-Value="Model.EmailAddress" />
+
+    <button type="submit">Login</button>
+</EditForm>

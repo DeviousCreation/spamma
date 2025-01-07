@@ -25,6 +25,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_", "_", "{431F583D-FEE4-49
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
 		docker-compose.yml = docker-compose.yml
+		global.json = global.json
 		LICENSE = LICENSE
 		README.md = README.md
 	EndProjectSection
@@ -32,6 +33,10 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Spamma.App.Tests.Common", "app\tests\Spamma.App.Tests.Common\Spamma.App.Tests.Common.csproj", "{13B8A0FB-9B78-4382-8CA6-FC4CAFC9B929}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Spamma.CodeGeneration", "shared\Spamma.CodeGeneration\Spamma.CodeGeneration.csproj", "{6A26AA7D-8707-42AB-86F0-95E5A7946770}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test-harnesses", "test-harnesses", "{8CF88267-C82E-490B-8749-97C8A4858C16}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spamma.TestHarnesses.EmailSender", "app\test-harness\Spamma.TestHarnesses.EmailSender\Spamma.TestHarnesses.EmailSender.csproj", "{F7F25DFF-12BD-413F-9DA1-4C1139F5CBEE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -63,6 +68,10 @@ Global
 		{6A26AA7D-8707-42AB-86F0-95E5A7946770}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6A26AA7D-8707-42AB-86F0-95E5A7946770}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6A26AA7D-8707-42AB-86F0-95E5A7946770}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F7F25DFF-12BD-413F-9DA1-4C1139F5CBEE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F7F25DFF-12BD-413F-9DA1-4C1139F5CBEE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F7F25DFF-12BD-413F-9DA1-4C1139F5CBEE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F7F25DFF-12BD-413F-9DA1-4C1139F5CBEE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -77,6 +86,8 @@ Global
 		{5B1AB703-43FD-4A6E-A5AD-D2B9FE8A40D4} = {E5CA6B3B-E80E-463E-9545-5178DFC968C7}
 		{13B8A0FB-9B78-4382-8CA6-FC4CAFC9B929} = {E5CA6B3B-E80E-463E-9545-5178DFC968C7}
 		{6A26AA7D-8707-42AB-86F0-95E5A7946770} = {068EEF80-5F8B-44A1-9FE6-BC2B06400148}
+		{8CF88267-C82E-490B-8749-97C8A4858C16} = {6DB9E7C9-20E0-42BA-A023-9F77FE4342C6}
+		{F7F25DFF-12BD-413F-9DA1-4C1139F5CBEE} = {8CF88267-C82E-490B-8749-97C8A4858C16}
 	EndGlobalSection
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		shared\Spamma.Shared\Spamma.Shared.projitems*{150e566e-c075-4fa9-8324-f93660f09187}*SharedItemsImports = 5

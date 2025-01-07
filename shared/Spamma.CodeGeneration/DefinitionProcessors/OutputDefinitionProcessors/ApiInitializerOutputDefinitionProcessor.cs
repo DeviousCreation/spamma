@@ -66,7 +66,7 @@ namespace Spamma.CodeGeneration.DefinitionProcessors.OutputDefinitionProcessors
                 s.AppendLine($"              var result = await sender.Send<{definition.CommandName}, {definition.CommandResultName}>(command);");
                 s.AppendLine("              var options = new JsonSerializerOptions();");
                 s.AppendLine("              options.PropertyNameCaseInsensitive = true;");
-                s.AppendLine($"             options.Converters.Add(new CommandResultConverter<{definition.CommandName}>());");
+                s.AppendLine($"             options.Converters.Add(new CommandResultConverter<{definition.CommandResultName}>());");
                 s.AppendLine("              return Results.Json(command, options);");
                 s.AppendLine("          });");
             }

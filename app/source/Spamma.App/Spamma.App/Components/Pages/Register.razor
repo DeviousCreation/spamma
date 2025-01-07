@@ -1,0 +1,13 @@
+﻿@page "/create-account"
+<h3>Create Account</h3>
+<EditForm Model="Model" method="post" OnSubmit="OnSubmit" FormName="register">
+    <div>
+        <label for="name">Name</label>
+        <InputText @bind-Value="Model.Name" id="name" />
+    </div>
+    <div>
+        <label for="email-address">Email Address</label>
+        <InputText @bind-Value="Model.EmailAddress" id="email-address" />
+    </div>
+    <button type="submit">Create Account</button>
+</EditForm>}

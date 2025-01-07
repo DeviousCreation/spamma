@@ -42,6 +42,10 @@ namespace Spamma.App.Infrastructure.Database.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("when_created");
 
+                    b.Property<DateTime?>("_whenDisabled")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("when_disabled");
+
                     b.HasKey("Id")
                         .HasName("pk_domain");
 
@@ -90,6 +94,10 @@ namespace Spamma.App.Infrastructure.Database.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
+                    b.Property<Guid>("CreatedUserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("created_user_id");
+
                     b.Property<Guid>("DomainId")
                         .HasColumnType("uuid")
                         .HasColumnName("domain_id");
@@ -99,6 +107,14 @@ namespace Spamma.App.Infrastructure.Database.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)")
                         .HasColumnName("name");
+
+                    b.Property<DateTime>("WhenCreated")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("when_created");
+
+                    b.Property<DateTime?>("_whenDisabled")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("when_disabled");
 
                     b.HasKey("Id")
                         .HasName("pk_subdomain");
@@ -115,6 +131,12 @@ namespace Spamma.App.Infrastructure.Database.Migrations
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid")
                         .HasColumnName("id");
+                    
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("name");
 
                     b.Property<string>("EmailAddress")
                         .IsRequired()
@@ -129,6 +151,10 @@ namespace Spamma.App.Infrastructure.Database.Migrations
                     b.Property<DateTime>("WhenCreated")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("when_created");
+
+                    b.Property<DateTime?>("_whenDisabled")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("when_disabled");
 
                     b.HasKey("Id")
                         .HasName("pk_user");
@@ -302,19 +328,19 @@ namespace Spamma.App.Infrastructure.Database.Migrations
                                 .HasColumnType("uuid")
                                 .HasColumnName("user_id");
 
-                            b1.Property<int>("PolicyType")
-                                .HasColumnType("integer")
-                                .HasColumnName("policy_type");
-
                             b1.Property<DateTime>("WhenAssigned")
                                 .HasColumnType("timestamp with time zone")
                                 .HasColumnName("when_assigned");
+
+                            b1.Property<int>("PolicyType")
+                                .HasColumnType("integer")
+                                .HasColumnName("policy_type");
 
                             b1.Property<DateTime?>("_whenRevoked")
                                 .HasColumnType("timestamp with time zone")
                                 .HasColumnName("when_revoked");
 
-                            b1.HasKey("DomainId", "Id")
+                            b1.HasKey("DomainId", "Id", "WhenAssigned")
                                 .HasName("pk_domain_access_policy");
 
                             b1.ToTable("domain_access_policy", (string)null);
@@ -376,19 +402,19 @@ namespace Spamma.App.Infrastructure.Database.Migrations
                                 .HasColumnType("uuid")
                                 .HasColumnName("user_id");
 
-                            b1.Property<int>("PolicyType")
-                                .HasColumnType("integer")
-                                .HasColumnName("policy_type");
-
                             b1.Property<DateTime>("WhenAssigned")
                                 .HasColumnType("timestamp with time zone")
                                 .HasColumnName("when_assigned");
+
+                            b1.Property<int>("PolicyType")
+                                .HasColumnType("integer")
+                                .HasColumnName("policy_type");
 
                             b1.Property<DateTime?>("_whenRevoked")
                                 .HasColumnType("timestamp with time zone")
                                 .HasColumnName("when_revoked");
 
-                            b1.HasKey("SubdomainId", "Id")
+                            b1.HasKey("SubdomainId", "Id", "WhenAssigned")
                                 .HasName("pk_subdomain_access_policy");
 
                             b1.ToTable("subdomain_access_policy", (string)null);

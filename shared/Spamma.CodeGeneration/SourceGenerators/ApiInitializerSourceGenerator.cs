@@ -1,93 +1,186 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
 using Spamma.CodeGeneration.DefinitionProcessors.InputDefinitionProcessors;
 using Spamma.CodeGeneration.DefinitionProcessors.OutputDefinitionProcessors;
 using Spamma.CodeGeneration.Extensions;
+using ApiInitializerInputDefinition = Spamma.CodeGeneration.DefinitionProcessors.InputDefinitionProcessors.ApiInitializerInputDefinitionProcessor.InputDefinition;
+using CommandHandlerInputDefinition = Spamma.CodeGeneration.DefinitionProcessors.InputDefinitionProcessors.CommandHandlerInputDefinitionProcessor.InputDefinition;
+using CommandOfTHandlerInputDefinition = Spamma.CodeGeneration.DefinitionProcessors.InputDefinitionProcessors.CommandOfTHandlerInputDefinitionProcessor.InputDefinition;
+using QueryProcessorInputDefinition = Spamma.CodeGeneration.DefinitionProcessors.InputDefinitionProcessors.QueryProcessorInputDefinitionProcessor.InputDefinition;
 
 namespace Spamma.CodeGeneration.SourceGenerators
 {
     [Generator]
-    public class ApiInitializerSourceGenerator : ISourceGenerator
+    public class ApiInitializerSourceGenerator : IIncrementalGenerator
     {
-        public void Initialize(GeneratorInitializationContext context)
+        private enum InputType
         {
-            context.RegisterForSyntaxNotifications(() => new ApiInitializerSyntaxReceiver());
+            None,
+            ApiInitializer,
+            QueryProcessor,
+            CommandHandler,
+            CommandOfTHandler,
         }
 
-        public void Execute(GeneratorExecutionContext context)
+        public void Initialize(IncrementalGeneratorInitializationContext context)
         {
-            if (!(context.SyntaxReceiver is ApiInitializerSyntaxReceiver receiver))
+            var apiInitializerInputDefinitionProcessor = new ApiInitializerInputDefinitionProcessor();
+            var queryProcessorInputDefinitionProcessor = new QueryProcessorInputDefinitionProcessor();
+            var commandHandlerInputDefinitionProcessor = new CommandHandlerInputDefinitionProcessor();
+            var commandOfTHandlerInputDefinitionProcessor = new CommandOfTHandlerInputDefinitionProcessor();
+
+            var syntaxProvider = context.SyntaxProvider
+                .CreateSyntaxProvider(
+                    predicate: (syntaxNode, _) =>
+                        apiInitializerInputDefinitionProcessor.CanProcess(syntaxNode) ||
+                        queryProcessorInputDefinitionProcessor.CanProcess(syntaxNode) ||
+                        commandHandlerInputDefinitionProcessor.CanProcess(syntaxNode) ||
+                        commandOfTHandlerInputDefinitionProcessor.CanProcess(syntaxNode),
+                    transform: (ctx, _) => new Container(
+                        ctx.SemanticModel,
+                        apiInitializerInputDefinitionProcessor.Process(ctx.Node),
+                        queryProcessorInputDefinitionProcessor.Process(ctx.Node),
+                        commandHandlerInputDefinitionProcessor.Process(ctx.Node),
+                        commandOfTHandlerInputDefinitionProcessor.Process(ctx.Node)))
+                .Where(result => result.InputType != InputType.None);
+
+            var combined = syntaxProvider.Collect();
+
+            context.RegisterSourceOutput(combined, (spc, source) =>
             {
-                return;
-            }
+                var apiInputDefinition = source.SingleOrDefault(x => x.InputType == InputType.ApiInitializer);
+                if (apiInputDefinition == null)
+                {
+                    return;
+                }
 
-            if (receiver.ApiInputDefinitions.Count != 1)
-            {
-                return;
-            }
+                var queries = source.Where(x => x.InputType == InputType.QueryProcessor)
+                        .Select(item => new ApiInitializerOutputDefinitionProcessor.OutputDefinition.QueryDefinition(
+                        item.QueryProcessor.QueryDeclaration.GetNamespace(item.SemanticModel), item.QueryProcessor.QueryDeclaration.ToString())).ToList();
 
-            var apiInputDefinition = receiver.ApiInputDefinitions[0];
+                var commands = source.Where(x => x.InputType == InputType.CommandHandler)
+                       .Select(item => new ApiInitializerOutputDefinitionProcessor.OutputDefinition.CommandDefinition(
+                           item.CommandHandler.CommandDeclaration.GetNamespace(item.SemanticModel),
+                           item.CommandHandler.CommandDeclaration.ToString())).ToList();
 
-            var queries = new List<ApiInitializerOutputDefinitionProcessor.OutputDefinition.QueryDefinition>();
-            foreach (var queryProcessorInputDefinition in receiver.QueryProcessorInputDefinitions.Select(x => x.QueryDeclaration))
-            {
-                queries.Add(new ApiInitializerOutputDefinitionProcessor.OutputDefinition.QueryDefinition(
-                    queryProcessorInputDefinition.GetNamespace(context),
-                    queryProcessorInputDefinition.ToString()));
-            }
+                var commandOfTs = source.Where(x => x.InputType == InputType.CommandOfTHandler)
+                         .Select(item => new ApiInitializerOutputDefinitionProcessor.OutputDefinition.CommandOfTDefinition(
+                             item.CommandOfTHandler.CommandDeclaration.GetNamespace(item.SemanticModel),
+                             item.CommandOfTHandler.CommandDeclaration.ToString(),
+                             item.CommandOfTHandler.CommandResultDeclaration.GetNamespace(item.SemanticModel),
+                             item.CommandOfTHandler.CommandResultDeclaration.ToString())).ToList();
 
-            var commands = new List<ApiInitializerOutputDefinitionProcessor.OutputDefinition.CommandDefinition>();
-            foreach (var queryProcessorInputDefinition in receiver.CommandHandlerInputDefinitions.Select(x => x.CommandDeclaration))
-            {
-                commands.Add(new ApiInitializerOutputDefinitionProcessor.OutputDefinition.CommandDefinition(
-                    queryProcessorInputDefinition.GetNamespace(context),
-                    queryProcessorInputDefinition.ToString()));
-            }
+                var outputDefinition = new ApiInitializerOutputDefinitionProcessor.OutputDefinition(
+                    apiInputDefinition.Api.ApiInitializerDeclaration.GetNamespace(),
+                    queries,
+                    commands,
+                    commandOfTs);
 
-            var commandOfTs = new List<ApiInitializerOutputDefinitionProcessor.OutputDefinition.CommandOfTDefinition>();
-            foreach (var queryProcessorInputDefinition in receiver.CommandOfTHandlerInputDefinitions)
-            {
-                commandOfTs.Add(new ApiInitializerOutputDefinitionProcessor.OutputDefinition.CommandOfTDefinition(
-                    queryProcessorInputDefinition.CommandDeclaration.GetNamespace(context),
-                    queryProcessorInputDefinition.CommandDeclaration.ToString(),
-                    queryProcessorInputDefinition.CommandResultDeclaration.GetNamespace(context),
-                    queryProcessorInputDefinition.CommandResultDeclaration.ToString()));
-            }
-
-            var outputDefinition = new ApiInitializerOutputDefinitionProcessor.OutputDefinition(
-                apiInputDefinition.ApiInitializerDeclaration.GetNamespace(),
-                queries,
-                commands,
-                commandOfTs);
-
-            context.AddSource(
+                spc.AddSource(
                 $"ApiInitializer.g.cs",
-                SourceText.From(new ApiInitializerOutputDefinitionProcessor().Process(outputDefinition), Encoding.UTF8));
+                SourceText.From(
+                    new ApiInitializerOutputDefinitionProcessor().Process(outputDefinition),
+                    Encoding.UTF8));
+            });
         }
 
-        private sealed class ApiInitializerSyntaxReceiver : ISyntaxReceiver
+        private sealed class Container
         {
-            public List<ApiInitializerInputDefinitionProcessor.InputDefinition> ApiInputDefinitions { get; }
-                = new List<ApiInitializerInputDefinitionProcessor.InputDefinition>();
+            private readonly ApiInitializerInputDefinition? _api;
+            private readonly QueryProcessorInputDefinition? _queryProcessor;
+            private readonly CommandHandlerInputDefinition? _commandHandler;
+            private readonly CommandOfTHandlerInputDefinition? _commandOfTHandler;
 
-            public List<QueryProcessorInputDefinitionProcessor.InputDefinition> QueryProcessorInputDefinitions { get; }
-                = new List<QueryProcessorInputDefinitionProcessor.InputDefinition>();
-
-            public List<CommandHandlerInputDefinitionProcessor.InputDefinition> CommandHandlerInputDefinitions { get; }
-                = new List<CommandHandlerInputDefinitionProcessor.InputDefinition>();
-
-            public List<CommandOfTHandlerInputDefinitionProcessor.InputDefinition> CommandOfTHandlerInputDefinitions { get; }
-                = new List<CommandOfTHandlerInputDefinitionProcessor.InputDefinition>();
-
-            public void OnVisitSyntaxNode(SyntaxNode syntaxNode)
+            public Container(
+                SemanticModel semanticModel,
+                ApiInitializerInputDefinition? api,
+                QueryProcessorInputDefinition? queryProcessor,
+                CommandHandlerInputDefinition? commandHandler,
+                CommandOfTHandlerInputDefinition? commandOfTHandler)
             {
-                this.ApiInputDefinitions.AddRange(new ApiInitializerInputDefinitionProcessor().Process(syntaxNode));
-                this.QueryProcessorInputDefinitions.AddRange(new QueryProcessorInputDefinitionProcessor().Process(syntaxNode));
-                this.CommandHandlerInputDefinitions.AddRange(new CommandHandlerInputDefinitionProcessor().Process(syntaxNode));
-                this.CommandOfTHandlerInputDefinitions.AddRange(new CommandOfTHandlerInputDefinitionProcessor().Process(syntaxNode));
+                this.SemanticModel = semanticModel;
+                if (api != default(ApiInitializerInputDefinition))
+                {
+                    this.InputType = InputType.ApiInitializer;
+                    this._api = api;
+                }
+                else if (queryProcessor != default(QueryProcessorInputDefinition))
+                {
+                    this.InputType = InputType.QueryProcessor;
+                    this._queryProcessor = queryProcessor;
+                }
+                else if (commandHandler != default(CommandHandlerInputDefinition))
+                {
+                    this.InputType = InputType.CommandHandler;
+                    this._commandHandler = commandHandler;
+                }
+                else if (commandOfTHandler != default(CommandOfTHandlerInputDefinition))
+                {
+                    this.InputType = InputType.CommandOfTHandler;
+                    this._commandOfTHandler = commandOfTHandler;
+                }
+                else
+                {
+                    this.InputType = InputType.None;
+                }
+            }
+
+            public InputType InputType { get; }
+
+            public SemanticModel SemanticModel { get; }
+
+            public ApiInitializerInputDefinition Api
+            {
+                get
+                {
+                    if (this.InputType == InputType.ApiInitializer)
+                    {
+                        return this._api!;
+                    }
+
+                    throw new System.InvalidOperationException("Invalid input type");
+                }
+            }
+
+            public QueryProcessorInputDefinition QueryProcessor
+            {
+                get
+                {
+                    if (this.InputType == InputType.QueryProcessor)
+                    {
+                        return this._queryProcessor!;
+                    }
+
+                    throw new System.InvalidOperationException("Invalid input type");
+                }
+            }
+
+            public CommandHandlerInputDefinition CommandHandler
+            {
+                get
+                {
+                    if (this.InputType == InputType.CommandHandler)
+                    {
+                        return this._commandHandler!;
+                    }
+
+                    throw new System.InvalidOperationException("Invalid input type");
+                }
+            }
+
+            public CommandOfTHandlerInputDefinition CommandOfTHandler
+            {
+                get
+                {
+                    if (this.InputType == InputType.CommandOfTHandler)
+                    {
+                        return this._commandOfTHandler!;
+                    }
+
+                    throw new System.InvalidOperationException("Invalid input type");
+                }
             }
         }
     }

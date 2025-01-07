@@ -2,5 +2,6 @@
 
 public enum SubdomainAccessPolicyType
 {
+    Unknown,
     Administrator,
 }

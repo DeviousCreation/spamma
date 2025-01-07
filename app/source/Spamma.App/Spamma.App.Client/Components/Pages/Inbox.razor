@@ -1,0 +1,93 @@
+﻿@page "/inbox"
+@using Microsoft.AspNetCore.Authorization
+@using Spamma.App.Client.Components.Layout
+@layout AppLayout
+@* @attribute [Authorize] *@
+@using FileSizeFromBase64.NET
+@using Humanizer
+
+<PageTitle>Spamma</PageTitle>
+@* <div id="index"> *@
+@*     <div id="messages-container"> *@
+@*         <div id="message-listing"> *@
+@*             <InputRadioGroup TValue="Guid" ValueChanged="OnMessageSelected" ValueExpression="() => _selectedId"> *@
+@*                 @foreach (var item in _emailMetaDataItems) *@
+@*                 { *@
+@*                     var id = $"msg-{item.Id}"; *@
+@*                     <div class="message-meta-item-container"> *@
+@*                         <InputRadio id="@id" Value="@item.Id"/> *@
+@*                         <label for="@id" class="message-meta-item"> *@
+@*                             <div class="message-meta-header"> *@
+@*                                 <div class="message-meta-header-to">@item.To</div> *@
+@*                                 <div class="message-meta-header-date">@HumanizeEpochMilliseconds(@item.WhenReceived)</div> *@
+@*                             </div> *@
+@*                             <div class="message-meta-subject">@item.Subject</div> *@
+@*                         </label> *@
+@*                     </div> *@
+@*                 } *@
+@*             </InputRadioGroup> *@
+@*         </div> *@
+@*         <div id="remaining-quota"> *@
+@*             &nbsp; *@
+@*         </div> *@
+@*     </div> *@
+@*     <div id="message-container"> *@
+@*         @if (this._mailMessage != null) *@
+@*         { *@
+@*             <div class="subject">@_mailMessage.Subject</div> *@
+@*             <div class="message-details"> *@
+@*                 <div class="addresses"> *@
+@*                     <div>From <span class="address">@_mailMessage.From</span></div> *@
+@*                     <div>To <span class="address">@_mailMessage.To</span></div> *@
+@*                 </div> *@
+@*                 <div class="actions"> *@
+@*                     <div class="data">@HumanizeEpochMilliseconds(_mailMessage.Date, true)</div> *@
+@*                 </div> *@
+@*             </div> *@
+@* *@
+@*             <div class="message-content"> *@
+@*                 <div class="tab"> *@
+@*                     <button class="@(_currentTab == Tab.Html ? "tablinks active" : "tablinks")" @onclick="() => _currentTab = Tab.Html" disabled="@(string.IsNullOrWhiteSpace(_mailMessage.HtmlBody))">HTML</button> *@
+@*                     <button class="@(_currentTab == Tab.Text ? "tablinks active" : "tablinks")" @onclick="() => _currentTab = Tab.Text" disabled="@(string.IsNullOrWhiteSpace(_mailMessage.TextBody))">Text</button> *@
+@*                     <button class="@(_currentTab == Tab.Source ? "tablinks active" : "tablinks")" @onclick="() => _currentTab = Tab.Source">Source</button> *@
+@*                     <button class="@(_currentTab == Tab.Attachments ? "tablinks active" : "tablinks")" @onclick="() => _currentTab = Tab.Attachments">Attachments (@_mailMessage.Attachments.Count())</button> *@
+@*                 </div> *@
+@*                 <div class="tab-content"> *@
+@*                     @switch (_currentTab) *@
+@*                     { *@
+@*                         case Tab.Html: *@
+@*                             <iframe srcdoc="@_mailMessage.HtmlBody"> *@
+@* *@
+@*                             </iframe> *@
+@*                             break; *@
+@*                         case Tab.Text: *@
+@*                             <pre> *@
+@*                         @_mailMessage.TextBody *@
+@*                     </pre> *@
+@*                             break; *@
+@*                         case Tab.Source: *@
+@*                             <CodeSnippet Language="json"> *@
+@*                                 @_mailMessage. *@
+@*                             </CodeSnippet> *@
+@*                             break; *@
+@*                         $1$ case Tab.Attachments: #1# *@
+@*                         $1$     <div class="attachment-listing"> #1# *@
+@*                         $1$         @foreach (var att in _mailMessage.Attachments) #1# *@
+@*                         $1$         { #1# *@
+@*                         $1$             <button class="attachment-item" type="button" @onclick="() => DownloadAttachment(att)"> #1# *@
+@*                         $1$                 <div class="attachment-icon"></div> #1# *@
+@*                         $1$                 <div class="attachment-details"> #1# *@
+@*                         $1$                     <span class="attachment-name">@att.</span> #1# *@
+@*                         $1$                     <span class="attachment-size">@FileSizeHelpers.GetFileSizeFromBase64String(att.Content).Bytes()</span> #1# *@
+@*                         $1$                 </div> #1# *@
+@*                         $1$             </button> #1# *@
+@*                         $1$         } #1# *@
+@*                         $1$     </div> #1# *@
+@*                         $1$     break; #1# *@
+@*                     } *@
+@*                 </div> *@
+@*             </div> *@
+@*         } *@
+@*     </div> *@
+@* </div> *@
+@* *@

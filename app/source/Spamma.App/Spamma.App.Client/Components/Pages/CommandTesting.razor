@@ -1,0 +1,15 @@
+﻿@page "/CommandTesting"
+@using Meziantou.AspNetCore.Components
+<h3>CommandTesting</h3>,
+@rendermode InteractiveWebAssembly
+
+
+
+    <EditForm Model="_model" OnSubmit="Submit">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <GenericForm Model="_model" />
+
+        <button type="submit">Submit</button>
+    </EditForm>

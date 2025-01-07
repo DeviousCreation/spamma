@@ -4,6 +4,7 @@ using Spamma.App.Client.Infrastructure.Constants;
 namespace Spamma.App.Client.Infrastructure.Contracts.Domain;
 
 public class CommandResult<T> : CommandResult
+    where T : ICommandResult
 {
     private readonly T? _data;
 
@@ -49,5 +50,10 @@ public class CommandResult<T> : CommandResult
     public static CommandResult<T> Succeeded(T data)
     {
         return new CommandResult<T>(data);
+    }
+
+    public static CommandResult<T> Unauthorized()
+    {
+        return new CommandResult<T>(new ErrorData(ErrorCodes.NotAuthorized));
     }
 }

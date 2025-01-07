@@ -1,0 +1,28 @@
+﻿@page "/settings/chaos-monkey-addresses"
+@layout SettingsLayout
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using Spamma.App.Client.Components.Layout
+
+<ConfirmDialog @ref="_confirmDialog" />
+<Card>
+    <CardHeader>
+        Chaos Monkey Addresses
+        <Button Color="ButtonColor.Primary" Type="ButtonType.Button" @onclick="OnAddChaosMonkeyClick">Add</Button>
+    </CardHeader>
+    <CardBody>
+
+        <CardText>
+            <QuickGrid @ref="_chaosMonkeyGrid" ItemsProvider="@_chaosMonkeyItemProvider" Pagination="@_chaosMonkeyPagination">
+                <PropertyColumn Property="@(p => p.EmailAddress)" Sortable="false" />
+                <PropertyColumn Property="@(p => p.ChaosMonkeyType)" Sortable="false" />
+                <TemplateColumn Title="" Sortable="false" />
+                <TemplateColumn>
+                    <Button Color="ButtonColor.Primary" Type="ButtonType.Button" @onclick="() => OnChaosMonkeyAddressDisableClick(context)">Delete</Button>
+                </TemplateColumn>
+            </QuickGrid>
+        </CardText>
+        <CardFooter>
+            <Paginator State="@_chaosMonkeyPagination" />
+        </CardFooter>
+    </CardBody>
+</Card>

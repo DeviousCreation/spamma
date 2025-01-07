@@ -2,6 +2,9 @@
 
 public enum ErrorCodes
 {
+    NotAuthorized = -2,
+    NotAuthenticated = -1,
+    Unknown = 0,
     CommunicationError,
     SavingChanges,
     ChaosMonkeyAddressAlreadyExists,
@@ -12,5 +15,9 @@ public enum ErrorCodes
     DomainAccessPolicyNotFound,
     SubdomainAccessPolicyNotFound,
     SubdomainAccessPolicyAlreadyExists,
-    TokenNotValid
+    TokenNotValid,
+    DomainAlreadyDisabled,
+    CurrentUserNotFound,
+    UserAlreadyVerified,
+    SettingValueNotChanged
 }

@@ -3,16 +3,18 @@
     <PropertyGroup>
         <TargetFramework>netstandard2.0</TargetFramework>
         <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
+        <LangVersion>9</LangVersion>
+        <Nullable>enable</Nullable>
     </PropertyGroup>
 
     <ItemGroup>
       <PackageReference Include="MaybeMonad" Version="1.0.1.1" />
-      <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.4">
+      <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.11.0">
         <PrivateAssets>all</PrivateAssets>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
-      <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.10.0" />
-      <PackageReference Include="SonarAnalyzer.CSharp" Version="9.29.0.95321">
+      <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.11.0" />
+      <PackageReference Include="SonarAnalyzer.CSharp" Version="9.32.0.97167">
         <PrivateAssets>all</PrivateAssets>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>

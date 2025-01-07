@@ -20,6 +20,8 @@ internal interface IAuthTokenProvider
 internal class AuthTokenProvider(IOptions<Settings> settings) : IAuthTokenProvider
 {
     private readonly Settings _settings = settings.Value;
+    private const string UserIdClaimType = "spamma-user-id";
+    private const string SecurityTokenClaimType = "spamma-security-token";
 
     public Task<Result<string>> GetToken(Guid userId, Guid securityStamp, DateTime whenCreated)
     {
@@ -29,8 +31,8 @@ internal class AuthTokenProvider(IOptions<Settings> settings) : IAuthTokenProvid
         {
             Subject = new ClaimsIdentity(new[]
             {
-                new Claim(JwtRegisteredClaimNames.Sub, userId.ToString()),
-                new Claim(JwtRegisteredClaimNames.Sid, securityStamp.ToString()),
+                new Claim(UserIdClaimType, userId.ToString()),
+                new Claim(SecurityTokenClaimType, securityStamp.ToString()),
             }),
             Expires = whenCreated.AddHours(1),
             SigningCredentials = new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256Signature),
@@ -69,13 +71,13 @@ internal class AuthTokenProvider(IOptions<Settings> settings) : IAuthTokenProvid
             return Task.FromResult(Result.Fail<IAuthTokenProvider.TokenResult, ErrorData>(new ErrorData(ErrorCodes.TokenNotValid, "Token not valid")));
         }
 
-        if (claimsPrincipal.Claims.All(x => x.Type != JwtRegisteredClaimNames.Sub) || claimsPrincipal.Claims.All(x => x.Type != JwtRegisteredClaimNames.Sid))
+        if (claimsPrincipal.Claims.All(x => x.Type != UserIdClaimType) || claimsPrincipal.Claims.All(x => x.Type != SecurityTokenClaimType))
         {
             return Task.FromResult(Result.Fail<IAuthTokenProvider.TokenResult, ErrorData>(new ErrorData(ErrorCodes.TokenNotValid, "Token not valid")));
         }
 
-        if (!Guid.TryParse(claimsPrincipal.Claims.Single(x => x.Type == JwtRegisteredClaimNames.Sub).Value, out var userId) ||
-            !Guid.TryParse(claimsPrincipal.Claims.Single(x => x.Type == JwtRegisteredClaimNames.Sid).Value, out var securityStamp))
+        if (!Guid.TryParse(claimsPrincipal.Claims.Single(x => x.Type == UserIdClaimType).Value, out var userId) ||
+            !Guid.TryParse(claimsPrincipal.Claims.Single(x => x.Type == SecurityTokenClaimType).Value, out var securityStamp))
         {
             return Task.FromResult(Result.Fail<IAuthTokenProvider.TokenResult, ErrorData>(new ErrorData(ErrorCodes.TokenNotValid, "Token not valid")));
         }
@@ -83,7 +85,7 @@ internal class AuthTokenProvider(IOptions<Settings> settings) : IAuthTokenProvid
         return Task.FromResult(Result.Ok<IAuthTokenProvider.TokenResult, ErrorData>(
             new IAuthTokenProvider.TokenResult(userId, securityStamp,
                 claimsPrincipal.Claims
-                    .Where(x => x.Type != JwtRegisteredClaimNames.Sub && x.Type != JwtRegisteredClaimNames.Sid)
+                    .Where(x => x.Type != UserIdClaimType && x.Type != SecurityTokenClaimType)
                     .ToDictionary(x => x.Type, x => x.Value))));
     }
 }

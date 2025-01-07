@@ -14,6 +14,10 @@ internal class UserConfiguration : IEntityTypeConfiguration<User>
         builder.Property(user => user.Id)
             .ValueGeneratedNever();
 
+        builder.Property(user => user.Name)
+            .IsRequired()
+            .HasMaxLength(100);
+
         builder.Property(user => user.EmailAddress)
             .IsRequired()
             .HasMaxLength(320);
@@ -23,6 +27,14 @@ internal class UserConfiguration : IEntityTypeConfiguration<User>
 
         builder.Property(user => user.SecurityStamp)
             .IsRequired();
+
+        builder.Ignore(user => user.IsVerified);
+        builder.Ignore(user => user.WhenVerified);
+
+        builder.Ignore(user => user.WhenDisabled);
+        builder.Ignore(user => user.IsDisabled);
+        builder.Property("_whenDisabled")
+            .HasColumnName("when_disabled");
 
         builder.OwnsMany(users => users.RecordedUserEvents, recordedUserEvents =>
         {

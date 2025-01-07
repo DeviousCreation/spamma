@@ -25,6 +25,17 @@ internal class SubdomainConfiguration : IEntityTypeConfiguration<Subdomain>
         builder.Property(subdomain => subdomain.DomainId)
             .IsRequired();
 
+        builder.Property(subdomain => subdomain.CreatedUserId)
+            .IsRequired();
+
+        builder.Property(subdomain => subdomain.WhenCreated)
+            .IsRequired();
+
+        builder.Ignore(subdomain => subdomain.WhenDisabled);
+        builder.Ignore(subdomain => subdomain.IsDisabled);
+        builder.Property("_whenDisabled")
+            .HasColumnName("when_disabled");
+
         builder.OwnsMany(subdomains => subdomains.ChaosMonkeyAddresses, chaosMonkeyAddresses =>
         {
             chaosMonkeyAddresses.HasKey(chaosMonkeyAddress => chaosMonkeyAddress.Id);
@@ -45,7 +56,7 @@ internal class SubdomainConfiguration : IEntityTypeConfiguration<Subdomain>
 
         builder.OwnsMany(subdomains => subdomains.SubdomainAccessPolicies, subdomainAccessPolicies =>
         {
-            subdomainAccessPolicies.HasKey("SubdomainId", "Id");
+            subdomainAccessPolicies.HasKey("SubdomainId", "Id", "WhenAssigned");
             subdomainAccessPolicies.ToTable("subdomain_access_policy");
             subdomainAccessPolicies.Ignore(subdomainAccessPolicy => subdomainAccessPolicy.DomainEvents);
             subdomainAccessPolicies.Property(subdomainAccessPolicy => subdomainAccessPolicy.Id)

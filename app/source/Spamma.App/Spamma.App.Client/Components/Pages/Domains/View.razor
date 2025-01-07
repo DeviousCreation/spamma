@@ -1,0 +1,146 @@
+﻿@page "/settings/domains/{DomainId}"
+@layout AppLayout
+
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using Spamma.App.Client.Components.Layout
+@using Spamma.App.Client.Infrastructure.Constants
+@rendermode InteractiveAuto
+<ConfirmDialog @ref="_confirmDialog" />
+<h3>Domains | </h3>
+
+<Card>
+    <CardHeader>
+        Details
+    </CardHeader>
+    <CardBody>
+        <CardText>
+            @if(_domain is not null)
+            {
+                <p>Id: @_domain.Id</p>
+                <p>Name: @_domain.Name</p>
+            }
+            else
+            {
+                <p>Loading...</p>
+            }
+        </CardText>
+    </CardBody>
+</Card>
+
+<Card>
+    <CardHeader>
+        Access
+        <Button Color="ButtonColor.Primary" Type="ButtonType.Button" @onclick="OnAddUserClick">Add User</Button>
+    </CardHeader>
+    <CardBody>
+
+        <CardText>
+            
+                <QuickGrid @ref="_domainAccessGrid" ItemsProvider="@_domainAccessItemProvider" Pagination="@_domainAccessPagination">
+                    <PropertyColumn Property="@(p => p.EmailAddress)" Sortable="false" />
+                    <PropertyColumn Property="@(p => p.Type)" Sortable="false" />
+                    <PropertyColumn Property="@(p => p.WhenAssigned)" Sortable="false" />
+                    <TemplateColumn>
+                        <Dropdown Color="DropdownColor.Primary" Split="true">
+                            <DropdownActionButton @onclick="() => this.OnChangeAccessClick(context)">Change Access</DropdownActionButton>
+                            <DropdownToggleButton />
+                            <DropdownMenu>
+                                <DropdownItem Type="DropdownItemType.Button" @onclick="() => this.OnRemoveAccessClick(context)">Revoke</DropdownItem>
+                            </DropdownMenu>
+                        </Dropdown>
+                    </TemplateColumn>
+                </QuickGrid>
+        </CardText>
+        <CardFooter>
+            <Paginator State="@_domainAccessPagination" />
+        </CardFooter>
+    </CardBody>
+</Card>
+
+
+<Card>
+    <CardHeader>
+        Subdomains
+        <Button Color="ButtonColor.Primary" Type="ButtonType.Button" @onclick="OnAddSubdomainClick">Add Subdomain</Button>
+    </CardHeader>
+
+    <CardText>
+        <QuickGrid @ref="_subdomainGrid" ItemsProvider="@_subdomainItemProvider" Pagination="@_subdomainPagination">
+            <PropertyColumn Property="@(p => p.SubdomainName)" Sortable="false" />
+            <TemplateColumn>
+                <Dropdown Color="DropdownColor.Primary" Split="true">
+                    <DropdownActionButton @onclick="() => OnSubdomainViewClick(context)">View</DropdownActionButton>
+                    <DropdownToggleButton />
+                    <DropdownMenu>
+                        <DropdownItem Type="DropdownItemType.Button" @onclick="async () => await OnSubdomainDisableClick(context)">Disable</DropdownItem>
+                    </DropdownMenu>
+                </Dropdown>
+            </TemplateColumn>
+        </QuickGrid>
+    </CardText>
+    <CardFooter>
+        <Paginator State="@_subdomainPagination" />
+    </CardFooter>
+</Card>
+
+<Offcanvas @ref="_addUserOffcanvas" title="Invite User">
+    <BodyTemplate>
+        <EditForm Model=@_addUserModel OnSubmit="this.OnAddUserSubmit">
+            <div class="form-group">
+                <label for="user">User</label>
+                <AutoComplete
+                    Id="user"
+                    @bind-Value="@_addUserModel.SelectedUserId"
+                              TItem="UserLookup"
+                              DataProvider="UserLookupDataProvider"
+                              PropertyName="Name"
+                    Placeholder="Search a user..."
+                    OnChanged="UserLookupChanged"/>
+            </div>
+
+            <div class="form-group">
+                <label for="user-level">Access Level</label>
+                <InputSelect id="user-level" @bind-Value="@_addUserModel.Type">
+                    <option value="@DomainAccessPolicyType.Unknown">Please Select</option>
+                    <option value="@DomainAccessPolicyType.Administrator">Administrator</option>
+                </InputSelect>
+            </div>
+            
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </EditForm>
+        
+    </BodyTemplate>
+</Offcanvas>
+
+
+<Offcanvas @ref="_changeAccessOffcanvas" title="Change User">
+    <BodyTemplate>
+        <EditForm Model="_changeAccessModel" OnSubmit="this.OnChangeAccessSubmit">
+            <p>This will change the current access level for @_changeAccessModel.Name, it is current set to @_changeAccessModel.Type.</p>
+            <div class="form-group">
+                <label for="@($"{nameof(ChangeAccessModel.Type)}-user-level")">Access Level</label>
+                <InputSelect id="@($"{nameof(ChangeAccessModel.Type)}-user-level")" @bind-Value="@_changeAccessModel.Type">
+                    <option value="@DomainAccessPolicyType.Unknown">Please Select</option>
+                    <option value="@DomainAccessPolicyType.Administrator">Administrator</option>
+                </InputSelect>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </EditForm>
+    </BodyTemplate>
+</Offcanvas>
+
+<Offcanvas @ref="_addSubdomainOffCanvas" title="Add Subdomain">
+    <BodyTemplate>
+        <EditForm Model=@_addSubdomainModel OnSubmit="this.OnAddSubdomainSubmit">
+            <div class="form-group">
+                <label for="domain-name">Name</label>
+                <InputText @bind-Value="@_addSubdomainModel.Name" class="form-control" id="domain-name" placeholder="example.com" />
+            </div>
+
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </EditForm>
+
+    </BodyTemplate>
+</Offcanvas>
+

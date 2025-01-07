@@ -8,10 +8,6 @@ internal class CreateSubdomainCommandValidator : AbstractValidator<CreateSubdoma
 {
     public CreateSubdomainCommandValidator()
     {
-        this.RuleFor(x => x.SubdomainId)
-            .NotEmpty()
-            .WithErrorCode(ValidationCodes.PropertyIsRequired);
-
         this.RuleFor(x => x.SubdomainName)
             .NotEmpty()
             .WithErrorCode(ValidationCodes.PropertyIsRequired);

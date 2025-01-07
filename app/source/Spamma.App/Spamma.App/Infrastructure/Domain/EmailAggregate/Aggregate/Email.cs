@@ -4,7 +4,7 @@ namespace Spamma.App.Infrastructure.Domain.EmailAggregate.Aggregate;
 
 internal class Email : Entity, IAggregateRoot
 {
-    internal Email(Guid id, Guid subdomainId, string emailAddress, string subject, DateTime whenSent)
+    internal Email(Guid id, Guid subdomainId, string emailAddress, string subject, DateTimeOffset whenSent)
     {
         this.Id = id;
         this.SubdomainId = subdomainId;
@@ -23,5 +23,5 @@ internal class Email : Entity, IAggregateRoot
 
     internal string Subject { get; private set; } = null!;
 
-    internal DateTime WhenSent { get; private set; }
+    internal DateTimeOffset WhenSent { get; private set; }
 }

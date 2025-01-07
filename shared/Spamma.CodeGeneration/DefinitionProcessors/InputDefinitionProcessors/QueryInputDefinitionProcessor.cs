@@ -2,39 +2,73 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Spamma.CodeGeneration.Contracts;
 
 namespace Spamma.CodeGeneration.DefinitionProcessors.InputDefinitionProcessors
 {
-    internal class QueryInputDefinitionProcessor : IInputDefinitionProcessor<QueryInputDefinitionProcessor.InputDefinition>
+    internal class QueryInputDefinitionProcessor : InputDefinitionProcessor<QueryInputDefinitionProcessor.InputDefinition>
     {
-        public IEnumerable<InputDefinition> Process(SyntaxNode syntaxNode)
+        protected override InputDefinition? ProcessInternal(SyntaxNode syntaxNode)
+        {
+            if (syntaxNode is not RecordDeclarationSyntax classDeclarationSyntax)
+            {
+                return null;
+            }
+
+            foreach (var baseType in classDeclarationSyntax.BaseList?.Types ?? Enumerable.Empty<BaseTypeSyntax>())
+            {
+                if (baseType is SimpleBaseTypeSyntax simpleBaseTypeSyntax &&
+                    simpleBaseTypeSyntax.Type is GenericNameSyntax genericNameSyntax1 &&
+                    !classDeclarationSyntax.Modifiers.Any(modifier => modifier.IsKind(SyntaxKind.AbstractKeyword)) &&
+                    genericNameSyntax1.Identifier.Text == "IQuery" &&
+                    genericNameSyntax1.TypeArgumentList.Arguments.Count == 1)
+                {
+                    return new InputDefinition(classDeclarationSyntax, genericNameSyntax1.TypeArgumentList.Arguments[0]);
+                    break;
+                }
+
+                if (baseType is PrimaryConstructorBaseTypeSyntax primaryConstructorBaseTypeSyntax &&
+                    primaryConstructorBaseTypeSyntax.Type is GenericNameSyntax genericNameSyntax &&
+                    genericNameSyntax.Identifier.Text == "GridParams" &&
+                    genericNameSyntax.TypeArgumentList.Arguments.Count == 1)
+                {
+                    return new InputDefinition(classDeclarationSyntax, genericNameSyntax.TypeArgumentList.Arguments[0]);
+                }
+            }
+
+            return null;
+        }
+
+        public override bool CanProcess(SyntaxNode syntaxNode)
         {
             if (!(syntaxNode is RecordDeclarationSyntax classDeclarationSyntax))
             {
-                return Array.Empty<InputDefinition>();
+                return false;
             }
 
-            var definitions = new List<InputDefinition>();
             foreach (var baseType in classDeclarationSyntax.BaseList?.Types ?? Enumerable.Empty<BaseTypeSyntax>())
             {
-                if (!(baseType is SimpleBaseTypeSyntax simpleBaseTypeSyntax))
+                if (baseType is SimpleBaseTypeSyntax simpleBaseTypeSyntax &&
+                    simpleBaseTypeSyntax.Type is GenericNameSyntax genericNameSyntax1 &&
+                    !classDeclarationSyntax.Modifiers.Any(modifier => modifier.IsKind(SyntaxKind.AbstractKeyword)) &&
+                    genericNameSyntax1.Identifier.Text == "IQuery" &&
+                    genericNameSyntax1.TypeArgumentList.Arguments.Count == 1)
                 {
-                    continue;
+                    return true;
                 }
 
-                if (!(simpleBaseTypeSyntax.Type is GenericNameSyntax genericNameSyntax) || genericNameSyntax.Identifier.Text != "IQuery" ||
-                    genericNameSyntax.TypeArgumentList.Arguments.Count != 1)
+                if (baseType is PrimaryConstructorBaseTypeSyntax primaryConstructorBaseTypeSyntax &&
+                    primaryConstructorBaseTypeSyntax.Type is GenericNameSyntax genericNameSyntax &&
+                    genericNameSyntax.Identifier.Text == "GridParams" &&
+                    genericNameSyntax.TypeArgumentList.Arguments.Count == 1)
                 {
-                    continue;
+                    return true;
                 }
-
-                definitions.Add(new InputDefinition(classDeclarationSyntax, genericNameSyntax.TypeArgumentList.Arguments[0]));
-                break;
             }
 
-            return definitions;
+            return false;
         }
 
         internal class InputDefinition : IInputDefinition

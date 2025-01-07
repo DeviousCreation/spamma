@@ -7,16 +7,15 @@ using Spamma.CodeGeneration.Contracts;
 
 namespace Spamma.CodeGeneration.DefinitionProcessors.InputDefinitionProcessors
 {
-    internal class CommandOfTInputDefinitionProcessor : IInputDefinitionProcessor<CommandOfTInputDefinitionProcessor.InputDefinition>
+    internal class CommandOfTInputDefinitionProcessor : InputDefinitionProcessor<CommandOfTInputDefinitionProcessor.InputDefinition>
     {
-        public IEnumerable<InputDefinition> Process(SyntaxNode syntaxNode)
+        public override bool CanProcess(SyntaxNode syntaxNode)
         {
             if (!(syntaxNode is RecordDeclarationSyntax classDeclarationSyntax))
             {
-                return Array.Empty<InputDefinition>();
+                return false;
             }
 
-            var definitions = new List<InputDefinition>();
             foreach (var baseType in classDeclarationSyntax.BaseList?.Types ?? Enumerable.Empty<BaseTypeSyntax>())
             {
                 if (!(baseType is SimpleBaseTypeSyntax simpleBaseTypeSyntax))
@@ -30,11 +29,20 @@ namespace Spamma.CodeGeneration.DefinitionProcessors.InputDefinitionProcessors
                     continue;
                 }
 
-                definitions.Add(new InputDefinition(classDeclarationSyntax, genericNameSyntax.TypeArgumentList.Arguments[0]));
-                break;
+                return true;
             }
 
-            return definitions;
+            return false;
+        }
+
+        protected override InputDefinition? ProcessInternal(SyntaxNode syntaxNode)
+        {
+            return ((RecordDeclarationSyntax)syntaxNode).BaseList?.Types.Select(type =>
+                ((GenericNameSyntax)((SimpleBaseTypeSyntax)type).Type)).First() is { } t
+                ? new InputDefinition(
+                    (syntaxNode as RecordDeclarationSyntax)!,
+                    t.TypeArgumentList.Arguments[0])
+                : null;
         }
 
         internal class InputDefinition : IInputDefinition

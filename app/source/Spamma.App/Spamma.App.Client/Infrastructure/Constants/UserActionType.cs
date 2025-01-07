@@ -2,9 +2,14 @@
 
 public enum UserActionType
 {
-    PasswordChanged,
     EmailAddressChanged,
     SuccessfulLogin,
     FailedLogin,
     LoginInitiated,
+    AccountVerified,
+    Invited,
+    AccountDisabled,
+    AccountVerficationRequested,
+    DetailsUpdated,
+    EmailAddressChangedInitialized
 }

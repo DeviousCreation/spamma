@@ -1,0 +1,28 @@
+﻿@page "/settings"
+@using Microsoft.AspNetCore.Authorization
+@using Spamma.App.Client.Components.Layout
+@layout AppLayout
+@attribute [Authorize]
+
+<Tabs NavStyle="NavStyle.Vertical">
+    <Tab Title="Domains" Active="true">
+        <Content>
+            <Spamma.App.Client.Components.Pages.Domains.Listing />
+        </Content>
+    </Tab>
+    <Tab Title="Subdomains">
+        <Content>
+            <p class="ms-3">This is the placeholder content for the <b>Profile</b> tab.</p>
+        </Content>
+    </Tab>
+    <Tab Title="Chaos Monkey Addresses">
+        <Content>
+            <p class="ms-3">This is the placeholder content for the <b>Contact</b> tab.</p>
+        </Content>
+    </Tab>
+    <Tab Title="Users">
+        <Content>
+            <p class="ms-3">This is the placeholder content for the <b>About</b> tab.</p>
+        </Content>
+    </Tab>
+</Tabs>

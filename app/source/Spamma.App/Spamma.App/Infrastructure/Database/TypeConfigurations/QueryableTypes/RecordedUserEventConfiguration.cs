@@ -9,6 +9,10 @@ internal class RecordedUserEventConfiguration : IEntityTypeConfiguration<Recorde
     public void Configure(EntityTypeBuilder<RecordedUserEventQueryEntity> builder)
     {
         builder.HasKey(recordedUserEvent => recordedUserEvent.Id);
+
+        builder.Property(recordedUserEvent => recordedUserEvent.ActionType);
+        builder.Property(recordedUserEvent => recordedUserEvent.WhenHappened);
+
         builder.ToView("vw_recorded_user_event");
     }
 }

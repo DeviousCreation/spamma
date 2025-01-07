@@ -9,6 +9,8 @@ internal class ChaosMonkeyAddressConfiguration : IEntityTypeConfiguration<ChaosM
     public void Configure(EntityTypeBuilder<ChaosMonkeyAddressQueryEntity> builder)
     {
         builder.HasKey(chaosMonkeyAddress => chaosMonkeyAddress.Id);
+        builder.Property(chaosMonkeyAddress => chaosMonkeyAddress.EmailAddress);
+        builder.Property(chaosMonkeyAddress => chaosMonkeyAddress.Type);
         builder.ToView("vw_chaos_monkey_address");
     }
 }

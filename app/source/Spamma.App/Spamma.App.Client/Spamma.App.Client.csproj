@@ -1,21 +1,30 @@
-<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
+﻿<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
 
     <PropertyGroup>
-        <TargetFramework>net8.0</TargetFramework>
+        <TargetFramework>net9.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <NoDefaultLaunchSettingsFile>true</NoDefaultLaunchSettingsFile>
         <StaticWebAssetProjectMode>Default</StaticWebAssetProjectMode>
+        <LangVersion>default</LangVersion>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Blazor.Bootstrap" Version="3.0.0-preview.3" />
-        <PackageReference Include="FluentValidation" Version="11.9.2" />
-        <PackageReference Include="MediatR" Version="12.3.0" />
-        <PackageReference Include="Microsoft.AspNetCore.Components.QuickGrid" Version="8.0.7" />
-        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.7" />
-        <PackageReference Include="Microsoft.Extensions.Http" Version="8.0.0" />
-        <PackageReference Include="SonarAnalyzer.CSharp" Version="9.29.0.95321">
+        <PackageReference Include="Blazor.Bootstrap" Version="3.2.0" />
+        <PackageReference Include="FileSizeFromBase64.NET" Version="2.0.0" />
+        <PackageReference Include="FluentValidation" Version="11.11.0" />
+        <PackageReference Include="Humanizer" Version="2.14.1" />
+        <PackageReference Include="MaybeMonad" Version="1.0.1.1" />
+        <PackageReference Include="MediatR" Version="12.4.1" />
+        <PackageReference Include="MediatR.Behaviors.Authorization" Version="12.2.0" />
+        <PackageReference Include="Meziantou.AspNetCore.Components" Version="2.0.11" />
+        <PackageReference Include="Microsoft.AspNetCore.Components.QuickGrid" Version="9.0.0" />
+        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="9.0.0" />
+        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Authentication" Version="9.0.0" />
+        <PackageReference Include="Microsoft.Extensions.Http" Version="9.0.0" />
+        <PackageReference Include="MimeKitLite" Version="4.8.0" />
+        <PackageReference Include="NodaTime" Version="3.2.0" />
+        <PackageReference Include="SonarAnalyzer.CSharp" Version="9.32.0.97167">
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
@@ -27,6 +36,36 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\..\..\shared\Spamma.CodeGeneration\Spamma.CodeGeneration.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="Pages\ChaosMonkeyAddresses\Listing.razor" />
+      <_ContentIncludedByDefault Remove="Pages\Domains\Listing.razor" />
+      <_ContentIncludedByDefault Remove="Pages\Domains\View.razor" />
+      <_ContentIncludedByDefault Remove="Pages\Home.razor" />
+      <_ContentIncludedByDefault Remove="Pages\Subdomains\Listing.razor" />
+      <_ContentIncludedByDefault Remove="Pages\Subdomains\View.razor" />
+      <_ContentIncludedByDefault Remove="Pages\Users\Listing.razor" />
+      <_ContentIncludedByDefault Remove="Pages\Users\View.razor" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <AdditionalFiles Include="Components\Pages\ChaosMonkeyAddresses\Listing.razor" />
+      <AdditionalFiles Include="Components\Pages\Domains\Listing.razor" />
+      <AdditionalFiles Include="Components\Pages\Domains\View.razor" />
+      <AdditionalFiles Include="Components\Pages\Subdomains\Listing.razor" />
+      <AdditionalFiles Include="Components\Pages\Subdomains\View.razor" />
+      <AdditionalFiles Include="Components\Pages\Users\Listing.razor" />
+      <AdditionalFiles Include="Components\Pages\Users\View.razor" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Update="Components\Pages\Users\View.razor.domain.cs">
+        <DependentUpon>View.razor</DependentUpon>
+      </Compile>
+      <Compile Update="Components\Pages\Users\View.razor.subdomain.cs">
+        <DependentUpon>View.razor</DependentUpon>
+      </Compile>
     </ItemGroup>
 
     <Import Project="..\..\..\..\shared\Spamma.Shared\Spamma.Shared.projitems" Label="Shared" />

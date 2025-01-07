@@ -26,4 +26,8 @@ internal class DomainQueryEntity : IQueryEntity
     internal IReadOnlyList<SubdomainQueryEntity> Subdomains { get; private set; }
 
     internal IReadOnlyList<DomainAccessPolicyQueryEntity> DomainAccessPolicies { get; private set; }
+
+    internal bool IsDisable { get; private set; }
+
+    internal DateTime? WhenDisabled { get; private set; }
 }

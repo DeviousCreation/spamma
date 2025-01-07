@@ -10,7 +10,7 @@ using Spamma.App.Infrastructure.Domain.UserAggregate.IntegrationEvents;
 namespace Spamma.App.Infrastructure.Domain.UserAggregate.CommandHandlers;
 
 internal class InitializeEmailChangeCommandHandler(
-    IEnumerable<IValidator<InitializeEmailChangeCommand>> validators, ILogger<InviteUserCommandHandler> logger,
+    IEnumerable<IValidator<InitializeEmailChangeCommand>> validators, ILogger<InitializeEmailChangeCommandHandler> logger,
     IRepository<User> repository, IIntegrationEventPublisher integrationEventPublisher, IClock clock) : CommandHandler<InitializeEmailChangeCommand>(validators, logger)
 {
     protected override async Task<CommandResult> HandleInternal(InitializeEmailChangeCommand request, CancellationToken cancellationToken)
@@ -28,7 +28,7 @@ internal class InitializeEmailChangeCommandHandler(
 
         var now = clock.GetCurrentInstant().ToDateTimeUtc();
 
-        var result = user.InitializeEmailChange(request.EmailAddress, now);
+        var result = user.InitializeEmailChange(now);
 
         if (result.IsFailure)
         {
@@ -40,7 +40,7 @@ internal class InitializeEmailChangeCommandHandler(
 
         if (dbResult.IsSuccess)
         {
-            await integrationEventPublisher.PublishAsync(new EmailChangeInitializedIntegrationEvent(user.Id, request.EmailAddress, user.SecurityStamp, now), cancellationToken);
+            await integrationEventPublisher.PublishAsync(new EmailAddressChangeInitializedIntegrationEvent(user.Id, request.EmailAddress, user.SecurityStamp, now), cancellationToken);
             return CommandResult.Succeeded();
         }
 

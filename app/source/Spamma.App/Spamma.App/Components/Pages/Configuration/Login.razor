@@ -1,0 +1,18 @@
+﻿@page "/config/sign-in"
+
+@using Spamma.App.Components.Layouts
+@layout ConfigExternalLayout
+
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title">Config Sign In</h5>
+        <p class="card-text">Please enter the code found in the system logs to continue.</p>
+        <EditForm Model="FormModel" OnSubmit="ValidateCode" FormName="login">
+            <div class="form-control">
+                <label for="login-code" class="form-label">Login Code</label>
+                <InputText type="password" @bind-Value="FormModel.Code" class="form-control" id="login-code"/>    
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Login</button>
+        </EditForm>
+    </div>
+</div>

@@ -10,12 +10,15 @@ using Spamma.App.Infrastructure.Domain.UserAggregate.IntegrationEvents;
 namespace Spamma.App.Infrastructure.Domain.UserAggregate.CommandHandlers;
 
 internal class RegisterUserCommandHandler(
-    IEnumerable<IValidator<RegisterUserCommand>> validators, ILogger<InviteUserCommandHandler> logger,
-    IRepository<User> repository, IIntegrationEventPublisher integrationEventPublisher, IClock clock) : CommandHandler<RegisterUserCommand>(validators, logger)
+    IEnumerable<IValidator<RegisterUserCommand>> validators, ILogger<RegisterUserCommandHandler> logger,
+    IRepository<User> repository, IIntegrationEventPublisher integrationEventPublisher, IClock clock)
+    : CommandHandler<RegisterUserCommand>(validators, logger)
 {
-    protected override async Task<CommandResult> HandleInternal(RegisterUserCommand request, CancellationToken cancellationToken)
+    protected override async Task<CommandResult> HandleInternal(
+        RegisterUserCommand request, CancellationToken cancellationToken)
     {
-        var user = new User(request.UserId, request.EmailAddress, request.WhenCreated);
+        var now = clock.GetCurrentInstant().ToDateTimeUtc();
+        var user = new User(Guid.NewGuid(), request.Name, request.EmailAddress, now);
 
         repository.Add(user);
 
@@ -24,7 +27,7 @@ internal class RegisterUserCommandHandler(
         if (dbResult.IsSuccess)
         {
             await integrationEventPublisher.PublishAsync(
-                new UserRegisteredIntegrationEvent(user.Id, user.EmailAddress, user.SecurityStamp, clock.GetCurrentInstant().ToDateTimeUtc()),
+                new UserRegisteredIntegrationEvent(user.Id, user.Name, user.EmailAddress, user.SecurityStamp, now),
                 cancellationToken);
             return CommandResult.Succeeded();
         }

@@ -1,21 +1,24 @@
-﻿using System.Collections.Generic;
-using Microsoft.CodeAnalysis;
+﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Spamma.CodeGeneration.Contracts;
 
 namespace Spamma.CodeGeneration.DefinitionProcessors.InputDefinitionProcessors
 {
-    internal class ApiInitializerInputDefinitionProcessor : IInputDefinitionProcessor<ApiInitializerInputDefinitionProcessor.InputDefinition>
+    internal class ApiInitializerInputDefinitionProcessor : InputDefinitionProcessor<ApiInitializerInputDefinitionProcessor.InputDefinition>
     {
-        public IEnumerable<InputDefinition> Process(SyntaxNode syntaxNode)
+        public override bool CanProcess(SyntaxNode syntaxNode)
         {
-            var definitions = new List<InputDefinition>();
-            if (syntaxNode is ClassDeclarationSyntax classDeclarationSyntax && classDeclarationSyntax.Identifier.Text == "ApiInitializer")
+            if (!(syntaxNode is ClassDeclarationSyntax classDeclaration))
             {
-                definitions.Add(new InputDefinition(classDeclarationSyntax));
+                return false;
             }
 
-            return definitions;
+            return classDeclaration.Identifier.Text == "ApiInitializer";
+        }
+
+        protected override InputDefinition ProcessInternal(SyntaxNode syntaxNode)
+        {
+            return new InputDefinition(syntaxNode as ClassDeclarationSyntax);
         }
 
         internal class InputDefinition : IInputDefinition

@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using MediatR.Behaviors.Authorization.Exceptions;
 
 namespace Spamma.App.Client.Infrastructure.Contracts.Domain;
 
@@ -14,16 +15,30 @@ public interface ICommander
 
 public class Commander(ISender sender) : ICommander
 {
-    public Task<CommandResult> Send<TCommand>(TCommand request, CancellationToken cancellationToken = default)
+    public async Task<CommandResult> Send<TCommand>(TCommand request, CancellationToken cancellationToken = default)
         where TCommand : ICommand
     {
-        return sender.Send(request, cancellationToken);
+        try
+        {
+            return await sender.Send(request, cancellationToken);
+        }
+        catch (UnauthorizedException e)
+        {
+            return CommandResult.Unauthorized();
+        }
     }
 
-    public Task<CommandResult<TCommandResult>> Send<TCommand, TCommandResult>(TCommand request, CancellationToken cancellationToken = default)
+    public async Task<CommandResult<TCommandResult>> Send<TCommand, TCommandResult>(TCommand request, CancellationToken cancellationToken = default)
         where TCommand : ICommand<TCommandResult>
         where TCommandResult : ICommandResult
     {
-        return sender.Send(request, cancellationToken);
+        try
+        {
+            return await sender.Send(request, cancellationToken);
+        }
+        catch (UnauthorizedException e)
+        {
+            return CommandResult<TCommandResult>.Unauthorized();
+        }
     }
 }

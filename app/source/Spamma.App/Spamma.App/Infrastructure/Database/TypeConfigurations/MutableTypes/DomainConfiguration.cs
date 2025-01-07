@@ -22,10 +22,14 @@ internal class DomainConfiguration : IEntityTypeConfiguration<Domain.DomainAggre
             .IsRequired();
         builder.Property(domain => domain.WhenCreated)
             .IsRequired();
+        builder.Ignore(domain => domain.WhenDisabled);
+        builder.Ignore(domain => domain.IsDisabled);
+        builder.Property("_whenDisabled")
+            .HasColumnName("when_disabled");
 
         builder.OwnsMany(domains => domains.DomainAccessPolicies, domainAccessPolicies =>
         {
-            domainAccessPolicies.HasKey("DomainId", "Id");
+            domainAccessPolicies.HasKey("DomainId", "Id", "WhenAssigned");
             domainAccessPolicies.ToTable("domain_access_policy");
             domainAccessPolicies.Ignore(domainAccessPolicy => domainAccessPolicy.DomainEvents);
             domainAccessPolicies.Property(domainAccessPolicy => domainAccessPolicy.Id)

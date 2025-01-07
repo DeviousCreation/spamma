@@ -11,6 +11,15 @@ internal class UserConfiguration : IEntityTypeConfiguration<UserQueryEntity>
         builder.HasKey(user => user.Id);
         builder.ToView("vw_user");
 
+        builder.Property(user => user.Name);
+        builder.Property(user => user.EmailAddress);
+        builder.Property(user => user.WhenDisabled);
+        builder.Property(user => user.WhenCreated);
+        builder.Property(user => user.WhenVerified);
+        builder.Property(user => user.LastLoggedIn);
+        builder.Property(user => user.DomainCount);
+        builder.Property(user => user.SubdomainCount);
+
         builder.HasMany(x => x.RecordedUserEventQueryEntities)
             .WithOne(x => x.User)
             .HasForeignKey(x => x.UserId);

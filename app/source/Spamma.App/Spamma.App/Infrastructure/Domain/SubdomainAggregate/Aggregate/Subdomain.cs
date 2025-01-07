@@ -9,12 +9,15 @@ internal class Subdomain : Entity, IAggregateRoot
 {
     private readonly List<ChaosMonkeyAddress> _chaosMonkeyAddresses;
     private readonly List<SubdomainAccessPolicy> _subdomainAccessPolicies;
+    private DateTime? _whenDisabled;
 
-    internal Subdomain(Guid id, string name, Guid domainId)
+    internal Subdomain(Guid id, string name, Guid domainId, Guid createdUserId, DateTime whenCreated)
     {
         this.Id = id;
         this.Name = name;
         this.DomainId = domainId;
+        this.CreatedUserId = createdUserId;
+        this.WhenCreated = whenCreated;
         this._chaosMonkeyAddresses = new List<ChaosMonkeyAddress>();
         this._subdomainAccessPolicies = new List<SubdomainAccessPolicy>();
     }
@@ -28,6 +31,25 @@ internal class Subdomain : Entity, IAggregateRoot
     internal string Name { get; private set; } = null!;
 
     internal Guid DomainId { get; private set; }
+
+    internal Guid CreatedUserId { get; private set; }
+
+    internal DateTime WhenCreated { get; private set; }
+
+    internal bool IsDisabled => this._whenDisabled != default;
+
+    internal DateTime WhenDisabled
+    {
+        get
+        {
+            if (this._whenDisabled == null)
+            {
+                throw new InvalidOperationException("Subdomain is not disabled.");
+            }
+
+            return this._whenDisabled.Value;
+        }
+    }
 
     internal IReadOnlyCollection<ChaosMonkeyAddress> ChaosMonkeyAddresses => this._chaosMonkeyAddresses.AsReadOnly();
 
@@ -107,5 +129,16 @@ internal class Subdomain : Entity, IAggregateRoot
         var result = domainAccessPolicy.Revoke(whenRevoked);
 
         return result.IsFailure ? ResultWithError.Fail(result.Error) : ResultWithError.Ok<ErrorData>();
+    }
+
+    internal ResultWithError<ErrorData> Disable(DateTime whenDisabled)
+    {
+        if (this.IsDisabled)
+        {
+            return ResultWithError.Fail(new ErrorData(ErrorCodes.DomainAlreadyDisabled, "Domain already disabled."));
+        }
+
+        this._whenDisabled = whenDisabled;
+        return ResultWithError.Ok<ErrorData>();
     }
 }

@@ -1,0 +1,57 @@
+﻿@page "/settings/subdomains"
+@page "/settings/domains/{DomainId}/subdomains"
+@using Microsoft.AspNetCore.Components.QuickGrid
+<h3>Subdomains</h3>
+
+<Card>
+    <CardBody>
+        <CardTitle><Button Color="ButtonColor.Primary" @onclick="OnAddClick">Add</Button></CardTitle>
+        <CardText>
+            <QuickGrid ItemsProvider="@_subdomainItemProvider" @ref="_grid" Pagination="@pagination">
+                <PropertyColumn Property="@(p => p.SubdomainId)" Sortable="false" />
+                <TemplateColumn Title="Name" Sortable="false">
+                    @context.SubdomainName<i>@context.DomainName</i>
+                </TemplateColumn>
+                <TemplateColumn>
+                    <Dropdown Color="DropdownColor.Primary" Split="true">
+                        <DropdownActionButton @onclick="() => OnViewClick(context)">View</DropdownActionButton>
+                        <DropdownToggleButton />
+                        <DropdownMenu>
+                            <DropdownItem Type="DropdownItemType.Button" @onclick="() => OnDisableClick(context)">Disable</DropdownItem>
+                        </DropdownMenu>
+                    </Dropdown>
+                </TemplateColumn>
+            </QuickGrid>
+        </CardText>
+        <CardFooter>
+            <Paginator State="@pagination" />    
+        </CardFooter>
+    </CardBody>
+</Card>
+
+<Offcanvas @ref="_addSubdomainOffCanvas" title="Add Subdomain">
+    <BodyTemplate>
+        <EditForm Model=@_addSubdomainModel OnSubmit="this.OnAddSubmit">
+            <div class="form-group">
+                <label for="domain-name">Subdomain Name</label>
+                <InputText @bind-Value="@_addSubdomainModel.SubdomainName" class="form-control" id="domain-name" placeholder="example.com" />
+            </div>
+            
+            @if (!_isAddDomainLevel)
+            {
+                <div class="form-group">
+                    <label for="domain-name">Domain</label>
+                    <InputSelect @bind-Value="@_addSubdomainModel.DomainId">
+                        <option value="">Please Select</option>
+                        @foreach (var domain in _domains)
+                        {
+                            <option value="@domain.DomainId">@domain.Name</option>
+                        }
+                    </InputSelect>
+                </div>
+            }
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </EditForm>
+        
+    </BodyTemplate>
+</Offcanvas>

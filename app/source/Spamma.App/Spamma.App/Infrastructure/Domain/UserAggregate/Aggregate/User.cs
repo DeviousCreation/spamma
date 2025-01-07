@@ -11,13 +11,16 @@ namespace Spamma.App.Infrastructure.Domain.UserAggregate.Aggregate;
 internal class User : Entity, IAggregateRoot
 {
     private readonly List<RecordedUserEvent> _recordedUserEvents;
+    private DateTime? _whenDisabled;
 
     internal User(
         Guid id,
+        string name,
         string emailAddress,
         DateTime whenCreated)
     {
         this.Id = id;
+        this.Name = name;
         this.EmailAddress = emailAddress;
         this.WhenCreated = whenCreated;
 
@@ -29,13 +32,55 @@ internal class User : Entity, IAggregateRoot
         this._recordedUserEvents = new List<RecordedUserEvent>();
     }
 
+    internal string Name { get; private set; } = null!;
+
     internal string EmailAddress { get; private set; } = null!;
 
     internal DateTime WhenCreated { get; private set; }
 
     internal Guid SecurityStamp { get; private set; }
 
+    internal bool IsVerified => this._recordedUserEvents.Exists(
+        x => x.ActionType == UserActionType.AccountVerified);
+
+    internal DateTime WhenVerified
+    {
+        get
+        {
+            var verifiedEvent = this._recordedUserEvents.Find(
+                x => x.ActionType == UserActionType.AccountVerified);
+
+            if (verifiedEvent == null)
+            {
+                throw new InvalidOperationException("User has not been verified.");
+            }
+
+            return verifiedEvent.WhenHappened;
+        }
+    }
+
+    internal bool IsDisabled => this._whenDisabled != default;
+
+    internal DateTime WhenDisabled
+    {
+        get
+        {
+            if (this._whenDisabled == default)
+            {
+                throw new InvalidOperationException("User is not disabled.");
+            }
+
+            return this._whenDisabled.Value;
+        }
+    }
+
     internal IReadOnlyCollection<RecordedUserEvent> RecordedUserEvents => this._recordedUserEvents.AsReadOnly();
+
+    internal ResultWithError<ErrorData> InitializeEmailChange(DateTime whenHappened)
+    {
+        this._recordedUserEvents.Add(new RecordedUserEvent(UserActionType.EmailAddressChangedInitialized, whenHappened));
+        return ResultWithError.Ok<ErrorData>();
+    }
 
     internal ResultWithError<ErrorData> ChangeEmailAddress(string newEmailAddress, DateTime whenChanged)
     {
@@ -44,36 +89,69 @@ internal class User : Entity, IAggregateRoot
         return ResultWithError.Ok<ErrorData>();
     }
 
-    internal ResultWithError<ErrorData> RecordSuccessfulLogin(DateTime whenHappened)
+    public ResultWithError<ErrorData> RequestVerification(DateTime whenHappened)
+    {
+        if (this.IsVerified)
+        {
+            return ResultWithError.Fail(new ErrorData(ErrorCodes.UserAlreadyVerified, "User already verified."));
+        }
+
+        this._recordedUserEvents.Add(new RecordedUserEvent(UserActionType.AccountVerficationRequested, whenHappened));
+        return ResultWithError.Ok<ErrorData>();
+    }
+
+    internal ResultWithError<ErrorData> ConfirmVerification(DateTime whenHappened)
+    {
+        if (this.IsVerified)
+        {
+            return ResultWithError.Fail(new ErrorData(ErrorCodes.UserAlreadyVerified, "User already verified."));
+        }
+
+        this._recordedUserEvents.Add(new RecordedUserEvent(UserActionType.AccountVerified, whenHappened));
+        return ResultWithError.Ok<ErrorData>();
+    }
+
+    internal ResultWithError<ErrorData> UpdateDetails(string name, DateTime whenHappened)
+    {
+        this.Name = name;
+        this._recordedUserEvents.Add(new RecordedUserEvent(UserActionType.DetailsUpdated, whenHappened));
+        return ResultWithError.Ok<ErrorData>();
+    }
+
+    internal ResultWithError<ErrorData> StartAuthViaEmail(DateTime whenHappened)
+    {
+        this._recordedUserEvents.Add(new RecordedUserEvent(UserActionType.LoginInitiated, whenHappened));
+        return ResultWithError.Ok<ErrorData>();
+    }
+
+    internal ResultWithError<ErrorData> CompleteAuthViaEmail(DateTime whenHappened)
     {
         this._recordedUserEvents.Add(new RecordedUserEvent(UserActionType.SuccessfulLogin, whenHappened));
         this.SecurityStamp = Guid.NewGuid();
         return ResultWithError.Ok<ErrorData>();
     }
 
-    internal ResultWithError<ErrorData> ConfirmInvitation(DateTime toDateTimeUtc)
+    internal ResultWithError<ErrorData> Disable(DateTime whenDisabled)
     {
-        throw new NotImplementedException();
-    }
+        if (this.IsDisabled)
+        {
+            return ResultWithError.Fail(new ErrorData(ErrorCodes.DomainAlreadyDisabled, "User already enabled."));
+        }
 
-    internal ResultWithError<ErrorData> InitializeEmailChange(string requestEmailAddress, DateTime now)
-    {
-        throw new NotImplementedException();
-    }
-
-    internal ResultWithError<ErrorData> UpdateDetails(string firstName, string lastName)
-    {
-        throw new NotImplementedException();
-    }
-
-    internal ResultWithError<ErrorData> StartAuthViaEmail(DateTime now)
-    {
-        this._recordedUserEvents.Add(new RecordedUserEvent(UserActionType.LoginInitiated, now));
+        this._whenDisabled = whenDisabled;
+        this._recordedUserEvents.Add(new RecordedUserEvent(UserActionType.AccountDisabled, whenDisabled));
         return ResultWithError.Ok<ErrorData>();
     }
 
-    internal ResultWithError<ErrorData> CompleteAuthViaEmail(DateTime now)
+    internal ResultWithError<ErrorData> Enable(DateTime whenEnable)
     {
-        throw new NotImplementedException();
+        if (!this.IsDisabled)
+        {
+            return ResultWithError.Fail(new ErrorData(ErrorCodes.DomainAlreadyDisabled, "User already enabled."));
+        }
+
+        this._whenDisabled = null;
+        this._recordedUserEvents.Add(new RecordedUserEvent(UserActionType.AccountDisabled, whenEnable));
+        return ResultWithError.Ok<ErrorData>();
     }
 }

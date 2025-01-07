@@ -16,9 +16,21 @@ internal class UserQueryEntity : IQueryEntity
 
     internal Guid Id { get; private set; }
 
+    internal string Name { get; private set; } = null!;
+
     internal string EmailAddress { get; private set; } = null!;
 
+    internal DateTime? WhenDisabled { get; private set; }
+
     internal DateTime WhenCreated { get; private set; }
+
+    internal DateTime? WhenVerified { get; private set; }
+
+    internal DateTime? LastLoggedIn { get; private set; }
+
+    internal int DomainCount { get; private set; }
+
+    internal int SubdomainCount { get; private set; }
 
     internal IReadOnlyList<RecordedUserEventQueryEntity> RecordedUserEventQueryEntities { get; private set; }
 

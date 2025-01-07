@@ -8,6 +8,7 @@ namespace Spamma.App.Infrastructure.Domain.DomainAggregate.Aggregate;
 internal class Domain : Entity, IAggregateRoot
 {
     private readonly List<DomainAccessPolicy> _domainAccessPolicies;
+    private DateTime? _whenDisabled;
 
     internal Domain(Guid id, string name, Guid createdUserId, DateTime whenCreated)
     {
@@ -15,15 +16,15 @@ internal class Domain : Entity, IAggregateRoot
         this.Name = name;
         this.CreatedUserId = createdUserId;
         this.WhenCreated = whenCreated;
-        this._domainAccessPolicies = new List<DomainAccessPolicy>
-        {
-            new DomainAccessPolicy(createdUserId, DomainAccessPolicyType.Administrator, whenCreated),
-        };
+        this._domainAccessPolicies =
+        [
+            new DomainAccessPolicy(createdUserId, DomainAccessPolicyType.Administrator, whenCreated)
+        ];
     }
 
     private Domain()
     {
-        this._domainAccessPolicies = new List<DomainAccessPolicy>();
+        this._domainAccessPolicies = [];
     }
 
     internal string Name { get; private set; } = null!;
@@ -32,7 +33,22 @@ internal class Domain : Entity, IAggregateRoot
 
     internal DateTime WhenCreated { get; private set; }
 
-    internal IReadOnlyCollection<DomainAccessPolicy> DomainAccessPolicies => this._domainAccessPolicies.AsReadOnly();
+    internal bool IsDisabled => this._whenDisabled != default;
+
+    internal DateTime WhenDisabled
+    {
+        get
+        {
+            if (this._whenDisabled == null)
+            {
+                throw new InvalidOperationException("Domain is not disabled.");
+            }
+
+            return this._whenDisabled.Value;
+        }
+    }
+
+    internal IReadOnlyList<DomainAccessPolicy> DomainAccessPolicies => this._domainAccessPolicies.AsReadOnly();
 
     internal ResultWithError<ErrorData> SetUserAccess(Guid userId, DomainAccessPolicyType policyType, DateTime whenAllowed)
     {
@@ -68,5 +84,16 @@ internal class Domain : Entity, IAggregateRoot
         var result = domainAccessPolicy.Revoke(whenRevoked);
 
         return result.IsFailure ? ResultWithError.Fail(result.Error) : ResultWithError.Ok<ErrorData>();
+    }
+
+    internal ResultWithError<ErrorData> Disable(DateTime whenDisabled)
+    {
+        if (this.IsDisabled)
+        {
+            return ResultWithError.Fail(new ErrorData(ErrorCodes.DomainAlreadyDisabled, "Domain already disabled."));
+        }
+
+        this._whenDisabled = whenDisabled;
+        return ResultWithError.Ok<ErrorData>();
     }
 }

@@ -7,6 +7,7 @@ namespace Spamma.App.Client.Infrastructure.Contracts.Domain;
 public class GenericCommandHandler<TCommand, TResult>(IHttpClientFactory httpClientFactory, ILogger<GenericCommandHandler<TCommand, TResult>> logger)
     : ICommandHandler<TCommand, TResult>
     where TCommand : ICommand<TResult>
+    where TResult : ICommandResult
 {
     public async Task<CommandResult<TResult>> Handle(TCommand request, CancellationToken cancellationToken)
     {

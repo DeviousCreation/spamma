@@ -11,7 +11,7 @@ using Spamma.App.Infrastructure.Domain.UserAggregate.IntegrationEvents;
 
 namespace Spamma.App.Infrastructure.Domain.UserAggregate.CommandHandlers;
 
-internal class CompleteAuthViaEmailCommandHandler(IEnumerable<IValidator<CompleteAuthViaEmailCommand>> validators, ILogger<ConfirmUserInvitationCommandHandler> logger,
+internal class CompleteAuthViaEmailCommandHandler(IEnumerable<IValidator<CompleteAuthViaEmailCommand>> validators, ILogger<CompleteAuthViaEmailCommandHandler> logger,
     IRepository<User> repository, IIntegrationEventPublisher integrationEventPublisher, IAuthTokenProvider authTokenProvider,
     IClock clock) : CommandHandler<CompleteAuthViaEmailCommand, CompleteAuthViaEmailCommandResult>(validators, logger)
 {
@@ -38,7 +38,7 @@ internal class CompleteAuthViaEmailCommandHandler(IEnumerable<IValidator<Complet
 
         var now = clock.GetCurrentInstant().ToDateTimeUtc();
 
-        var result = user.RecordSuccessfulLogin(now);
+        var result = user.CompleteAuthViaEmail(now);
 
         if (result.IsFailure)
         {
@@ -51,7 +51,8 @@ internal class CompleteAuthViaEmailCommandHandler(IEnumerable<IValidator<Complet
         if (dbResult.IsSuccess)
         {
             await integrationEventPublisher.PublishAsync(new EmailAuthCompletedIntegrationEvent(user.Id, now), cancellationToken);
-            return CommandResult<CompleteAuthViaEmailCommandResult>.Succeeded(new CompleteAuthViaEmailCommandResult(user.Id));
+            return CommandResult<CompleteAuthViaEmailCommandResult>.Succeeded(
+                new CompleteAuthViaEmailCommandResult(user.Id, user.EmailAddress, user.Name));
         }
 
         logger.LogInformation("Failed saving changes");

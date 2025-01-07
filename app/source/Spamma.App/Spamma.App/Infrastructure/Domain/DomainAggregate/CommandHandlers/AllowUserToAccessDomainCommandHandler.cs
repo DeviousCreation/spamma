@@ -1,21 +1,26 @@
 ﻿using FluentValidation;
+using NodaTime;
 using Spamma.App.Client.Infrastructure.Constants;
 using Spamma.App.Client.Infrastructure.Contracts.Domain;
 using Spamma.App.Client.Infrastructure.Domain.DomainAggregate.Commands;
 using Spamma.App.Infrastructure.Contracts.Domain;
-using Spamma.App.Infrastructure.Domain.DomainAggregate.Aggregate;
 using Spamma.App.Infrastructure.Domain.DomainAggregate.IntegrationEvents;
 
 namespace Spamma.App.Infrastructure.Domain.DomainAggregate.CommandHandlers;
 
 internal class AllowUserToAccessDomainCommandHandler(
-    IEnumerable<IValidator<AllowUserToAccessDomainCommand>> validators, ILogger<AllowUserToAccessDomainCommandHandler> logger,
-    IRepository<Domain.DomainAggregate.Aggregate.Domain> repository, IIntegrationEventPublisher integrationEventPublisher)
+    IEnumerable<IValidator<AllowUserToAccessDomainCommand>> validators,
+    ILogger<AllowUserToAccessDomainCommandHandler> logger,
+    IRepository<Domain.DomainAggregate.Aggregate.Domain> repository,
+    IIntegrationEventPublisher integrationEventPublisher,
+    IClock clock)
     : CommandHandler<AllowUserToAccessDomainCommand>(validators, logger)
 {
-    protected override async Task<CommandResult> HandleInternal(AllowUserToAccessDomainCommand request, CancellationToken cancellationToken)
+    protected override async Task<CommandResult> HandleInternal(
+        AllowUserToAccessDomainCommand request, CancellationToken cancellationToken)
     {
-        var maybe = await repository.FindOne(new ByIdSpecification<Aggregate.Domain>(request.DomainId), cancellationToken);
+        var maybe = await repository.FindOne(
+            new ByIdSpecification<Aggregate.Domain>(request.DomainId), cancellationToken);
 
         if (maybe.HasNoValue)
         {
@@ -26,7 +31,8 @@ internal class AllowUserToAccessDomainCommandHandler(
 
         var domain = maybe.Value;
 
-        var result = domain.SetUserAccess(request.UserId, request.DomainAccessPolicyType, request.WhenAllowed);
+        var result = domain.SetUserAccess(
+            request.UserId, request.DomainAccessPolicyType, clock.GetCurrentInstant().ToDateTimeUtc());
 
         if (result.IsFailure)
         {
@@ -39,7 +45,9 @@ internal class AllowUserToAccessDomainCommandHandler(
         if (dbResult.IsSuccess)
         {
             await integrationEventPublisher.PublishAsync(
-                new UserAllowedAccessToDomainIntegrationEvent(request.DomainId, request.UserId, request.DomainAccessPolicyType), cancellationToken: cancellationToken);
+                new UserAllowedAccessToDomainIntegrationEvent(
+                    request.DomainId, request.UserId, request.DomainAccessPolicyType),
+                cancellationToken: cancellationToken);
             return CommandResult.Succeeded();
         }
 

@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net9.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="FluentEmail.Core" Version="3.0.2" />
+
+        <PackageReference Include="FluentEmail.Smtp" Version="3.0.2" />
+      <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.0" />
+      <PackageReference Include="Tynamix.ObjectFiller" Version="1.5.9" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.0" />
+        <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.0" />
+
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\source\Spamma.App\Spamma.App\Spamma.App.csproj" />
+    </ItemGroup>
+
+</Project>

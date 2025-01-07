@@ -6,71 +6,135 @@ using Microsoft.CodeAnalysis.Text;
 using Spamma.CodeGeneration.DefinitionProcessors.InputDefinitionProcessors;
 using Spamma.CodeGeneration.DefinitionProcessors.OutputDefinitionProcessors;
 using Spamma.CodeGeneration.Extensions;
+using CommandInputDefinition = Spamma.CodeGeneration.DefinitionProcessors.InputDefinitionProcessors.CommandInputDefinitionProcessor.InputDefinition;
+using CommandOfTInputDefinition = Spamma.CodeGeneration.DefinitionProcessors.InputDefinitionProcessors.CommandOfTInputDefinitionProcessor.InputDefinition;
 
 namespace Spamma.CodeGeneration.SourceGenerators
 {
     [Generator]
-    public class CommandHandlerSourceGenerator : ISourceGenerator
+    public class CommandHandlerSourceGenerator : IIncrementalGenerator
     {
-        public void Initialize(GeneratorInitializationContext context)
+        internal enum InputType
         {
-            context.RegisterForSyntaxNotifications(() => new CommandInterfaceSyntaxReceiver());
+            None,
+            CommandInput,
+            CommandOfTInput,
         }
 
-        public void Execute(GeneratorExecutionContext context)
+        public void Initialize(IncrementalGeneratorInitializationContext context)
         {
-            if (!(context.SyntaxReceiver is CommandInterfaceSyntaxReceiver receiver))
+            var commandInputDefinitionProcessor = new CommandInputDefinitionProcessor();
+            var commandOfTInputDefinitionProcessor = new CommandOfTInputDefinitionProcessor();
+
+            var syntaxProvider = context.SyntaxProvider
+                .CreateSyntaxProvider(
+                    predicate: (syntaxNode, _) =>
+                        commandInputDefinitionProcessor.CanProcess(syntaxNode) ||
+                        commandOfTInputDefinitionProcessor.CanProcess(syntaxNode),
+                    transform: (syntaxContext, _) => new Container(
+                        syntaxContext.SemanticModel,
+                        commandInputDefinitionProcessor.Process(syntaxContext.Node),
+                        commandOfTInputDefinitionProcessor.Process(syntaxContext.Node)))
+                .Where(result => result.InputType != InputType.None);
+
+            var combined = syntaxProvider.Collect();
+
+            context.RegisterSourceOutput(combined, (spc, source) =>
             {
-                return;
-            }
+                var commandHandlerOutputDefinitionProcessor = new CommandHandlerOutputDefinitionProcessor();
+                foreach (var commandDeclaration in source.Where(x => x.InputType == InputType.CommandInput)
+                             .Select(item => item.CommandInputDefinition.CommandDeclaration))
+                {
+                    var commandName = commandDeclaration.Identifier.Text;
+                    var commandNamespace = commandDeclaration.GetNamespace();
 
-            var commandHandlerOutputDefinitionProcessor = new CommandHandlerOutputDefinitionProcessor();
-            foreach (var commandDeclaration in receiver.CommandDefinitions.Select(x => x.CommandDeclaration))
-            {
-                var commandName = commandDeclaration.Identifier.Text;
-                var commandNamespace = commandDeclaration.GetNamespace();
+                    var src = commandHandlerOutputDefinitionProcessor.Process(
+                        new CommandHandlerOutputDefinitionProcessor.OutputDefinition(
+                            commandNamespace,
+                            commandNamespace.Replace("Commands", "CommandHandlers"),
+                            commandName));
 
-                var src = commandHandlerOutputDefinitionProcessor.Process(new CommandHandlerOutputDefinitionProcessor.OutputDefinition(
-                    commandNamespace,
-                    commandNamespace.Replace("Commands", "CommandHandlers"),
-                    commandName));
+                    spc.AddSource(
+                        $"{commandName}Handler.g.cs",
+                        SourceText.From(src, Encoding.UTF8));
+                }
 
-                context.AddSource(
-                    $"{commandName}Handler.g.cs",
-                    SourceText.From(src, Encoding.UTF8));
-            }
+                var commandOfTHandlerOutputDefinitionProcessor = new CommandOfTHandlerOutputDefinitionProcessor();
+                foreach (var definition in source.Where(x => x.InputType == InputType.CommandOfTInput))
+                {
+                    var commandName = definition.CommandOfTInputDefinition.CommandDeclaration.Identifier.Text;
+                    var commandNamespace = definition.CommandOfTInputDefinition.CommandDeclaration.GetNamespace();
 
-            var commandOfTHandlerOutputDefinitionProcessor = new CommandOfTHandlerOutputDefinitionProcessor();
-            foreach (var definition in receiver.CommandOfTDefinitions)
-            {
-                var commandName = definition.CommandDeclaration.Identifier.Text;
-                var commandNamespace = definition.CommandDeclaration.GetNamespace();
+                    var src = commandOfTHandlerOutputDefinitionProcessor.Process(
+                        new CommandOfTHandlerOutputDefinitionProcessor.OutputDefinition(
+                            commandNamespace,
+                            definition.CommandOfTInputDefinition.CommandResultDeclaration.GetNamespace(definition
+                                .SemanticModel),
+                            commandNamespace.Replace("Commands", "CommandHandlers"),
+                            commandName,
+                            definition.CommandOfTInputDefinition.CommandResultDeclaration.ToString()));
 
-                var src = commandOfTHandlerOutputDefinitionProcessor.Process(new CommandOfTHandlerOutputDefinitionProcessor.OutputDefinition(
-                    commandNamespace,
-                    definition.CommandResultDeclaration.GetNamespace(context),
-                    commandNamespace.Replace("Commands", "CommandHandlers"),
-                    commandName,
-                    definition.CommandResultDeclaration.ToString()));
+                    spc.AddSource(
+                        $"{commandName}Handler.g.cs",
+                        SourceText.From(src, Encoding.UTF8));
+                }
 
-                context.AddSource(
-                    $"{commandName}Handler.g.cs",
-                    SourceText.From(src, Encoding.UTF8));
-            }
+
+            });
         }
 
-        private sealed class CommandInterfaceSyntaxReceiver : ISyntaxReceiver
+        private sealed class Container
         {
-            public List<CommandInputDefinitionProcessor.InputDefinition> CommandDefinitions { get; }
-                = new List<CommandInputDefinitionProcessor.InputDefinition>();
+            private readonly CommandInputDefinition? _commandInputDefinition;
+            private readonly CommandOfTInputDefinition? _commandOfTInputDefinition;
 
-            public List<CommandOfTInputDefinitionProcessor.InputDefinition> CommandOfTDefinitions { get; }
-                = new List<CommandOfTInputDefinitionProcessor.InputDefinition>();
-
-            public void OnVisitSyntaxNode(SyntaxNode syntaxNode)
+            public Container(SemanticModel semanticModel, CommandInputDefinition? commandInputDefinition, CommandOfTInputDefinition? commandOfTInputDefinition)
             {
-                this.CommandDefinitions.AddRange(new CommandInputDefinitionProcessor().Process(syntaxNode));
-                this.CommandOfTDefinitions.AddRange(new CommandOfTInputDefinitionProcessor().Process(syntaxNode));
+                this.SemanticModel = semanticModel;
+                if (commandInputDefinition != default(CommandInputDefinition))
+                {
+                    this.InputType = InputType.CommandInput;
+                    this._commandInputDefinition = commandInputDefinition;
+                }
+                else if (commandOfTInputDefinition != default(CommandOfTInputDefinition))
+                {
+                    this.InputType = InputType.CommandOfTInput;
+                    this._commandOfTInputDefinition = commandOfTInputDefinition;
+                }
+                else
+                {
+                    this.InputType = InputType.None;
+                }
+            }
+
+            public InputType InputType { get; }
+
+            public SemanticModel SemanticModel { get; }
+
+            public CommandInputDefinition CommandInputDefinition
+            {
+                get
+                {
+                    if (this.InputType == InputType.CommandInput)
+                    {
+                        return this._commandInputDefinition!;
+                    }
+
+                    throw new System.InvalidOperationException("Invalid input type");
+                }
+            }
+
+            public CommandOfTInputDefinition CommandOfTInputDefinition
+            {
+                get
+                {
+                    if (this.InputType == InputType.CommandOfTInput)
+                    {
+                        return this._commandOfTInputDefinition!;
+                    }
+
+                    throw new System.InvalidOperationException("Invalid input type");
+                }
             }
         }
     }

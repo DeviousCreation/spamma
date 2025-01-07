@@ -23,12 +23,9 @@ internal abstract class CommandHandler<TCommand>(IEnumerable<IValidator<TCommand
         logger.LogInformation("Command validation failed");
         return CommandResult.Invalid(new CommandValidationResult
         {
-            Failures = failures.Select(x => new CommandValidationFailure
-            {
-                PropertyName = x.PropertyName,
-                ErrorMessage = x.ErrorMessage,
-                AttemptedValue = x.AttemptedValue,
-            }).ToList(),
+            Failures = failures.Select(
+                x => new CommandValidationFailure(
+                    x.ErrorMessage, x.PropertyName, x.AttemptedValue)).ToList(),
         });
     }
 

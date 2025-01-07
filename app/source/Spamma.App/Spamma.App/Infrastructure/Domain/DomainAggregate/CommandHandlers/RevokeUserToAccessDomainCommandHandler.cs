@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using NodaTime;
 using Spamma.App.Client.Infrastructure.Constants;
 using Spamma.App.Client.Infrastructure.Contracts.Domain;
 using Spamma.App.Client.Infrastructure.Domain.DomainAggregate.Commands;
@@ -7,12 +8,18 @@ using Spamma.App.Infrastructure.Domain.DomainAggregate.IntegrationEvents;
 
 namespace Spamma.App.Infrastructure.Domain.DomainAggregate.CommandHandlers;
 
-internal class RevokeUserToAccessDomainCommandHandler(IEnumerable<IValidator<RevokeUserToAccessDomainCommand>> validators, ILogger<RevokeUserToAccessDomainCommandHandler> logger,
-    IRepository<Domain.DomainAggregate.Aggregate.Domain> repository, IIntegrationEventPublisher integrationEventPublisher) : CommandHandler<RevokeUserToAccessDomainCommand>(validators, logger)
+internal class RevokeUserToAccessDomainCommandHandler(
+    IEnumerable<IValidator<RevokeUserToAccessDomainCommand>> validators,
+    ILogger<RevokeUserToAccessDomainCommandHandler> logger,
+    IRepository<Domain.DomainAggregate.Aggregate.Domain> repository,
+    IIntegrationEventPublisher integrationEventPublisher,
+    IClock clock) : CommandHandler<RevokeUserToAccessDomainCommand>(validators, logger)
 {
-    protected override async Task<CommandResult> HandleInternal(RevokeUserToAccessDomainCommand request, CancellationToken cancellationToken)
+    protected override async Task<CommandResult> HandleInternal(
+        RevokeUserToAccessDomainCommand request, CancellationToken cancellationToken)
     {
-        var maybe = await repository.FindOne(new ByIdSpecification<Aggregate.Domain>(request.DomainId), cancellationToken);
+        var maybe = await repository.FindOne(
+            new ByIdSpecification<Aggregate.Domain>(request.DomainId), cancellationToken);
 
         if (maybe.HasNoValue)
         {
@@ -23,7 +30,7 @@ internal class RevokeUserToAccessDomainCommandHandler(IEnumerable<IValidator<Rev
 
         var domain = maybe.Value;
 
-        var result = domain.RevokeUserAccess(request.UserId, request.WhenRevoked);
+        var result = domain.RevokeUserAccess(request.UserId, clock.GetCurrentInstant().ToDateTimeUtc());
 
         if (result.IsFailure)
         {
@@ -36,7 +43,8 @@ internal class RevokeUserToAccessDomainCommandHandler(IEnumerable<IValidator<Rev
         if (dbResult.IsSuccess)
         {
             await integrationEventPublisher.PublishAsync(
-                new UserRevokedAccessToDomainIntegrationEvent(request.DomainId, request.UserId), cancellationToken: cancellationToken);
+                new UserRevokedAccessToDomainIntegrationEvent(
+                    request.DomainId, request.UserId), cancellationToken: cancellationToken);
 
             return CommandResult.Succeeded();
         }

@@ -1,23 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
+﻿using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Spamma.CodeGeneration.Contracts;
 
 namespace Spamma.CodeGeneration.DefinitionProcessors.InputDefinitionProcessors
 {
-    internal class CommandOfTHandlerInputDefinitionProcessor : IInputDefinitionProcessor<CommandOfTHandlerInputDefinitionProcessor.InputDefinition>
+    internal class CommandOfTHandlerInputDefinitionProcessor : InputDefinitionProcessor<CommandOfTHandlerInputDefinitionProcessor.InputDefinition>
     {
-        public IEnumerable<InputDefinition> Process(SyntaxNode syntaxNode)
+        public override bool CanProcess(SyntaxNode syntaxNode)
         {
             if (!(syntaxNode is ClassDeclarationSyntax classDeclarationSyntax))
             {
-                return Array.Empty<InputDefinition>();
+                return false;
             }
 
-            var definitions = new List<InputDefinition>();
             foreach (var baseType in classDeclarationSyntax.BaseList?.Types ?? Enumerable.Empty<BaseTypeSyntax>())
             {
                 if (!(baseType is PrimaryConstructorBaseTypeSyntax simpleBaseTypeSyntax))
@@ -31,13 +27,21 @@ namespace Spamma.CodeGeneration.DefinitionProcessors.InputDefinitionProcessors
                     continue;
                 }
 
-                definitions.Add(new InputDefinition(
-                    genericNameSyntax.TypeArgumentList.Arguments[0],
-                    genericNameSyntax.TypeArgumentList.Arguments[1]));
-                break;
+                return true;
             }
 
-            return definitions;
+            return false;
+        }
+
+        protected override InputDefinition ProcessInternal(SyntaxNode syntaxNode)
+        {
+            var classDeclarationSyntax = (ClassDeclarationSyntax)syntaxNode;
+            var t = classDeclarationSyntax.BaseList.Types.Select(type =>
+                ((GenericNameSyntax)((PrimaryConstructorBaseTypeSyntax)type).Type)).First();
+
+            return new InputDefinition(
+                    t.TypeArgumentList.Arguments[0],
+                    t.TypeArgumentList.Arguments[1]);
         }
 
         internal class InputDefinition : IInputDefinition

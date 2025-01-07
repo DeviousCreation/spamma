@@ -11,7 +11,7 @@ using Spamma.App.Infrastructure.Domain.UserAggregate.IntegrationEvents;
 namespace Spamma.App.Infrastructure.Domain.UserAggregate.CommandHandlers;
 
 internal class ChangeEmailCommandHandler(
-    IEnumerable<IValidator<ChangeEmailCommand>> validators, ILogger<ConfirmUserInvitationCommandHandler> logger,
+    IEnumerable<IValidator<ChangeEmailCommand>> validators, ILogger<ChangeEmailCommandHandler> logger,
     IRepository<User> repository, IIntegrationEventPublisher integrationEventPublisher, IAuthTokenProvider authTokenProvider,
     IClock clock) : CommandHandler<ChangeEmailCommand>(validators, logger)
 {
@@ -49,7 +49,7 @@ internal class ChangeEmailCommandHandler(
 
         if (dbResult.IsSuccess)
         {
-            await integrationEventPublisher.PublishAsync(new EmailChangedIntegrationEvent(user.Id, user.EmailAddress, now), cancellationToken);
+            await integrationEventPublisher.PublishAsync(new EmailAddressChangedIntegrationEvent(user.Id, user.EmailAddress, now), cancellationToken);
             return CommandResult.Succeeded();
         }
 

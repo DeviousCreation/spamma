@@ -13,6 +13,12 @@ internal class SubdomainAccessPolicyConfiguration : IEntityTypeConfiguration<Sub
             domainAccessPolicy.UserId,
             domainAccessPolicy.SubdomainId,
         });
+        
+        builder.Property(domainAccessPolicy => domainAccessPolicy.PolicyType);
+        builder.Property(domainAccessPolicy => domainAccessPolicy.IsRevoked);
+        builder.Property(domainAccessPolicy => domainAccessPolicy.WhenAssigned);
+        builder.Property(domainAccessPolicy => domainAccessPolicy.WhenRevoked);
+        
         builder.ToView("vw_subdomain_access_policy");
     }
 }

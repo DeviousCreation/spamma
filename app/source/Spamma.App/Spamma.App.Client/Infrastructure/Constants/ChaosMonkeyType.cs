@@ -5,4 +5,10 @@ public enum ChaosMonkeyType
     None,
     NotFound,
     InboxFull,
+    NotAllowed,
+    AuthFailed,
+    AuthRequired,
+    Unavailable,
+    SizeLimitExceeded,
+    NoValidRecipients
 }

@@ -11,7 +11,7 @@ using Spamma.App.Infrastructure.Domain.UserAggregate.IntegrationEvents;
 namespace Spamma.App.Infrastructure.Domain.UserAggregate.CommandHandlers;
 
 internal class VerifyUserCommandHandler(
-    IEnumerable<IValidator<VerifyUserCommand>> validators, ILogger<ConfirmUserInvitationCommandHandler> logger,
+    IEnumerable<IValidator<VerifyUserCommand>> validators, ILogger<VerifyUserCommandHandler> logger,
     IRepository<User> repository, IIntegrationEventPublisher integrationEventPublisher, IAuthTokenProvider authTokenProvider,
     IClock clock) : CommandHandler<VerifyUserCommand>(validators, logger)
 {
@@ -37,7 +37,7 @@ internal class VerifyUserCommandHandler(
 
         var now = clock.GetCurrentInstant().ToDateTimeUtc();
 
-        var result = user.ConfirmInvitation(now);
+        var result = user.ConfirmVerification(now);
 
         if (result.IsFailure)
         {

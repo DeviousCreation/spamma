@@ -2,4 +2,4 @@
 
 namespace Spamma.App.Client.Infrastructure.Domain.DomainAggregate.Commands;
 
-public record CreateDomainCommand(Guid DomainId, string DomainName, Guid CreatedByUserId, DateTime WhenCreated) : ICommand;
+public record CreateDomainCommand(string DomainName) : ICommand;

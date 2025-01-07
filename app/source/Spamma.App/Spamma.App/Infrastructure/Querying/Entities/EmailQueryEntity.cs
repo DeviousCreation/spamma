@@ -19,7 +19,7 @@ internal class EmailQueryEntity : IQueryEntity
 
     internal string Subject { get; private set; } = null!;
 
-    internal DateTime WhenSent { get; private set; }
+    internal DateTimeOffset WhenSent { get; private set; }
 
     internal SubdomainQueryEntity? Subdomain { get; private set; }
 }

@@ -5,6 +5,7 @@ namespace Spamma.App.Infrastructure.Contracts.Domain;
 
 internal abstract class CommandHandler<TCommand, TResult>(IEnumerable<IValidator<TCommand>> validators, ILogger logger) : ICommandHandler<TCommand, TResult>
     where TCommand : ICommand<TResult>
+    where TResult : ICommandResult
 {
     public async Task<CommandResult<TResult>> Handle(TCommand request, CancellationToken cancellationToken)
     {
@@ -22,12 +23,9 @@ internal abstract class CommandHandler<TCommand, TResult>(IEnumerable<IValidator
          logger.LogInformation("Command validation failed");
          return CommandResult<TResult>.Invalid(new CommandValidationResult
          {
-             Failures = failures.Select(x => new CommandValidationFailure
-             {
-                 PropertyName = x.PropertyName,
-                 ErrorMessage = x.ErrorMessage,
-                 AttemptedValue = x.AttemptedValue,
-             }).ToList(),
+             Failures = failures.Select(
+                 x => new CommandValidationFailure(
+                     x.ErrorMessage, x.PropertyName, x.AttemptedValue)).ToList(),
          });
      }
 

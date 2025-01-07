@@ -1,0 +1,47 @@
+﻿@page "/settings/users"
+@using Microsoft.AspNetCore.Components.QuickGrid
+@rendermode InteractiveAuto
+
+<h3>Users</h3>
+<Card>
+    <CardTitle><Button Color="ButtonColor.Primary" @onclick="OnInviteClick">Invite</Button></CardTitle>
+    <CardBody>
+        <QuickGrid ItemsProvider="@_userItemProvider" @ref="_grid" Pagination="@pagination">
+            <PropertyColumn Property="@(p => p.EmailAddress)" Sortable="false" Title="Email Address"/>
+            <PropertyColumn Property="@(p => p.WhenInvited)" Sortable="false" Title="Invited"/>
+            <PropertyColumn Property="@(p => p.LastLoginAt)" Sortable="false" Title="Last Login"/>
+            <PropertyColumn Property="@(p => p.DomainCount)" Sortable="false" Title="Domains"/>
+            <PropertyColumn Property="@(p => p.SubdomainCount)" Sortable="false" Title="Subdomains"/>
+            <TemplateColumn Title="" Sortable="false">
+                <Dropdown Color="DropdownColor.Primary" Split="true">
+                    <DropdownActionButton @onclick="() => NavigateToUser(context.Id)" >View</DropdownActionButton>
+                    <DropdownToggleButton />
+                    <DropdownMenu>
+                        <DropdownItem @onclick="() => ToggleUserState(context.Id, context.WhenDisabled == null)" Type="DropdownItemType.Button">Disabled</DropdownItem>
+                    </DropdownMenu>
+                </Dropdown>
+            </TemplateColumn>
+        </QuickGrid>
+    </CardBody>
+    <CardFooter>
+        <Paginator State="@pagination" />
+    </CardFooter>
+</Card>
+
+<Offcanvas @ref="_inviteUserOffCanvas" title="Invite User">
+    <BodyTemplate>
+        <EditForm Model=@_inviteUserModel OnSubmit="this.OnInviteSubmit">
+            <div class="form-group">
+                <label for="name">Name</label>
+                <InputText @bind-Value="@_inviteUserModel.Name" class="form-control" id="name" />
+            </div>
+            <div class="form-group">
+                <label for="email-address">Email Address</label>
+                <InputText @bind-Value="@_inviteUserModel.EmailAddress" class="form-control" id="email-address" />
+            </div>
+
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </EditForm>
+        
+    </BodyTemplate>
+</Offcanvas>

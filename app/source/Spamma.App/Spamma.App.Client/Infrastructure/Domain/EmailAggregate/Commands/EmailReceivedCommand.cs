@@ -3,4 +3,4 @@
 namespace Spamma.App.Client.Infrastructure.Domain.EmailAggregate.Commands;
 
 public record EmailReceivedCommand(
-    Guid EmailId, Guid SubdomainId, string EmailAddress, string Subject, DateTime WhenSent) : ICommand;
+    Guid EmailId, Guid SubdomainId, string EmailAddress, string Subject, DateTimeOffset WhenSent) : ICommand;
